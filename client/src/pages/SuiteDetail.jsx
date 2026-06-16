@@ -73,6 +73,16 @@ export default function SuiteDetail() {
     navigate('/test-suites');
   };
 
+  const handleNewRun = async () => {
+    const res = await fetch('/api/test-runs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ suite_id: Number(id), created_by: 'user' }),
+    });
+    const json = await res.json();
+    if (json.success) navigate(`/test-runs/${json.data.id}`);
+  };
+
   // Drag-to-reorder handlers
   const onDragStart = (e, index) => {
     dragFrom.current = index;
@@ -153,6 +163,12 @@ export default function SuiteDetail() {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <button
+                onClick={handleNewRun}
+                className="px-3 py-1.5 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700"
+              >
+                ▶ Run Tests
+              </button>
               <button
                 onClick={() => setEditModalOpen(true)}
                 className="px-3 py-1.5 border border-gray-300 rounded-md text-sm text-gray-600 hover:bg-gray-50"

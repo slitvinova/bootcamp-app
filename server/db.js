@@ -97,6 +97,54 @@ const SEED_BUGS = [
   },
 ];
 
+const SEED_TEST_RUNS = [
+  {
+    suite_id: 1,
+    suite_name: 'Login Smoke Suite',
+    status: 'completed',
+    pass_count: 1,
+    fail_count: 1,
+    skip_count: 1,
+    created_by: 'seed',
+  },
+];
+
+function buildTestRunSeed(ts) {
+  const d1ago = new Date(new Date(ts).getTime() - 1 * 24 * 60 * 60 * 1000).toISOString();
+  const runs = SEED_TEST_RUNS.map((r, i) => ({
+    id: i + 1,
+    ...r,
+    start_time: d1ago,
+    end_time: d1ago,
+    created_at: d1ago,
+    updated_at: d1ago,
+  }));
+  const results = [
+    {
+      id: 1, run_id: 1, test_case_id: 1,
+      test_case_title: 'Log in with valid credentials', test_case_severity: 'Critical',
+      sort_order: 1, result: 'passed', duration_ms: 342, notes: '',
+      failed_at: null, github_issue_url: null, created_at: d1ago, updated_at: d1ago,
+    },
+    {
+      id: 2, run_id: 1, test_case_id: 2,
+      test_case_title: 'Log in with invalid password', test_case_severity: 'Critical',
+      sort_order: 2, result: 'failed', duration_ms: 891,
+      notes: 'Error message not displayed — page reloads silently instead of showing validation feedback.',
+      failed_at: d1ago, github_issue_url: 'https://github.com/slitvinova/bootcamp-app/issues/2',
+      created_at: d1ago, updated_at: d1ago,
+    },
+    {
+      id: 3, run_id: 1, test_case_id: 5,
+      test_case_title: 'Log out of the app', test_case_severity: 'Major',
+      sort_order: 3, result: 'skipped', duration_ms: null,
+      notes: 'Skipped — blocked by login failure.',
+      failed_at: null, github_issue_url: null, created_at: d1ago, updated_at: d1ago,
+    },
+  ];
+  return { runs, results };
+}
+
 function buildBugActivities(ts) {
   const d2ago = new Date(new Date(ts).getTime() - 2 * 24 * 60 * 60 * 1000).toISOString();
   const d1ago = new Date(new Date(ts).getTime() - 1 * 24 * 60 * 60 * 1000).toISOString();
@@ -135,6 +183,10 @@ function read() {
       bugs: SEED_BUGS.map((b, i) => ({ id: i + 1, ...b, created_at: ts, updated_at: ts })),
       nextBugActivityId: buildBugActivities(ts).length + 1,
       bugActivity: buildBugActivities(ts).map((a, i) => ({ id: i + 1, ...a })),
+      nextTestRunId: 2,
+      nextTestRunResultId: 4,
+      testRuns: buildTestRunSeed(ts).runs,
+      testRunResults: buildTestRunSeed(ts).results,
     };
     fs.writeFileSync(DB_PATH, JSON.stringify(initial, null, 2));
     return initial;
@@ -160,6 +212,17 @@ function read() {
     data.bugs = SEED_BUGS.map((b, i) => ({ id: i + 1, ...b, created_at: ts, updated_at: ts }));
     data.nextBugActivityId = acts.length + 1;
     data.bugActivity = acts.map((a, i) => ({ id: i + 1, ...a }));
+    fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
+  }
+
+  // Migration: add test runs tables if missing
+  if (!data.testRuns) {
+    const ts = now();
+    const seed = buildTestRunSeed(ts);
+    data.nextTestRunId = 2;
+    data.nextTestRunResultId = 4;
+    data.testRuns = seed.runs;
+    data.testRunResults = seed.results;
     fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
   }
 
@@ -426,6 +489,125 @@ const db = {
       return (read().bugActivity || [])
         .filter(a => a.bug_id === Number(id))
         .sort((a, b) => a.timestamp < b.timestamp ? -1 : 1);
+    },
+  },
+  // ── Test Runs ─────────────────────────────────────────────────────────────
+
+  testRuns: {
+    list() {
+      const data = read();
+      return (data.testRuns || []).slice().sort((a, b) =>
+        b.created_at > a.created_at ? 1 : -1
+      );
+    },
+
+    get(id) {
+      const data = read();
+      const run = (data.testRuns || []).find(r => r.id === Number(id));
+      if (!run) return null;
+      const results = (data.testRunResults || [])
+        .filter(r => r.run_id === Number(id))
+        .sort((a, b) => a.sort_order - b.sort_order);
+      return { ...run, results };
+    },
+
+    getResult(runId, resultId) {
+      return (read().testRunResults || [])
+        .find(r => r.id === Number(resultId) && r.run_id === Number(runId)) || null;
+    },
+
+    create(suiteId, createdBy) {
+      const data = read();
+      const suite = (data.suites || []).find(s => s.id === Number(suiteId));
+      if (!suite) return null;
+      const suiteCases = (data.suiteCases || [])
+        .filter(sc => sc.suite_id === Number(suiteId))
+        .sort((a, b) => a.sort_order - b.sort_order)
+        .map(sc => {
+          const tc = (data.testCases || []).find(t => t.id === sc.test_case_id);
+          return tc ? { ...tc, sort_order: sc.sort_order } : null;
+        })
+        .filter(Boolean);
+      const ts = now();
+      const run = {
+        id: data.nextTestRunId++,
+        suite_id: Number(suiteId),
+        suite_name: suite.name,
+        status: 'pending',
+        pass_count: 0,
+        fail_count: 0,
+        skip_count: 0,
+        start_time: ts,
+        end_time: null,
+        created_by: createdBy || 'user',
+        created_at: ts,
+        updated_at: ts,
+      };
+      data.testRuns = data.testRuns || [];
+      data.testRuns.push(run);
+      data.testRunResults = data.testRunResults || [];
+      suiteCases.forEach(tc => {
+        data.testRunResults.push({
+          id: data.nextTestRunResultId++,
+          run_id: run.id,
+          test_case_id: tc.id,
+          test_case_title: tc.title,
+          test_case_severity: tc.severity,
+          sort_order: tc.sort_order,
+          result: null,
+          duration_ms: null,
+          notes: '',
+          failed_at: null,
+          github_issue_url: null,
+          created_at: ts,
+          updated_at: ts,
+        });
+      });
+      write(data);
+      const results = data.testRunResults
+        .filter(r => r.run_id === run.id)
+        .sort((a, b) => a.sort_order - b.sort_order);
+      return { ...run, results };
+    },
+
+    updateResult(runId, resultId, fields) {
+      const data = read();
+      const rIdx = (data.testRunResults || [])
+        .findIndex(r => r.id === Number(resultId) && r.run_id === Number(runId));
+      if (rIdx === -1) return null;
+      const ts = now();
+      const prev = data.testRunResults[rIdx];
+      data.testRunResults[rIdx] = {
+        ...prev,
+        ...fields,
+        failed_at: fields.result === 'failed'
+          ? (prev.failed_at || ts)
+          : null,
+        updated_at: ts,
+      };
+      const runIdx = (data.testRuns || []).findIndex(r => r.id === Number(runId));
+      if (runIdx === -1) return null;
+      const all = (data.testRunResults || []).filter(r => r.run_id === Number(runId));
+      const pass_count = all.filter(r => r.result === 'passed').length;
+      const fail_count = all.filter(r => r.result === 'failed').length;
+      const skip_count = all.filter(r => r.result === 'skipped').length;
+      const recorded = pass_count + fail_count + skip_count;
+      const status = recorded === 0 ? 'pending'
+        : recorded === all.length ? 'completed'
+        : 'running';
+      data.testRuns[runIdx] = {
+        ...data.testRuns[runIdx],
+        pass_count,
+        fail_count,
+        skip_count,
+        status,
+        end_time: status === 'completed' ? ts : null,
+        updated_at: ts,
+      };
+      write(data);
+      const run = data.testRuns[runIdx];
+      const results = all.sort((a, b) => a.sort_order - b.sort_order);
+      return { ...run, results };
     },
   },
 };

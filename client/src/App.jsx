@@ -5,6 +5,8 @@ import TestSuites from './pages/TestSuites';
 import SuiteDetail from './pages/SuiteDetail';
 import Bugs from './pages/Bugs';
 import BugDetail from './pages/BugDetail';
+import TestRuns from './pages/TestRuns';
+import TestRunDetail from './pages/TestRunDetail';
 
 export default function App() {
   return (
@@ -16,6 +18,8 @@ export default function App() {
         <Route path="/test-suites/:id" element={<SuiteDetail />} />
         <Route path="/bugs" element={<Bugs />} />
         <Route path="/bugs/:id" element={<BugDetail />} />
+        <Route path="/test-runs" element={<TestRuns />} />
+        <Route path="/test-runs/:id" element={<TestRunDetail />} />
         <Route path="*" element={<Navigate to="/test-cases" replace />} />
       </Routes>
     </BrowserRouter>

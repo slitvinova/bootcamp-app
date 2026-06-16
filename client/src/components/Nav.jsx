@@ -13,6 +13,7 @@ export default function Nav() {
       <div className="max-w-7xl mx-auto flex gap-6 h-12 items-end pb-0">
         <NavLink to="/test-cases" className={link}>Test Cases</NavLink>
         <NavLink to="/test-suites" className={link}>Test Suites</NavLink>
+        <NavLink to="/test-runs" className={link}>Test Runs</NavLink>
         <NavLink to="/bugs" className={link}>Bugs</NavLink>
       </div>
     </nav>
