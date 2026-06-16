@@ -490,6 +490,16 @@ const db = {
         .filter(a => a.bug_id === Number(id))
         .sort((a, b) => a.timestamp < b.timestamp ? -1 : 1);
     },
+
+    recentActivity(limit = 10) {
+      const data = read();
+      const bugMap = Object.fromEntries((data.bugs || []).map(b => [b.id, b.title]));
+      return (data.bugActivity || [])
+        .slice()
+        .sort((a, b) => (b.timestamp > a.timestamp ? 1 : -1))
+        .slice(0, limit)
+        .map(a => ({ ...a, bug_title: bugMap[a.bug_id] || null }));
+    },
   },
   // ── Test Runs ─────────────────────────────────────────────────────────────
 

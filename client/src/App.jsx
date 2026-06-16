@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Nav from './components/Nav';
+import Dashboard from './pages/Dashboard';
 import TestCases from './pages/TestCases';
 import TestSuites from './pages/TestSuites';
 import SuiteDetail from './pages/SuiteDetail';
@@ -13,6 +14,8 @@ export default function App() {
     <BrowserRouter>
       <Nav />
       <Routes>
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/test-cases" element={<TestCases />} />
         <Route path="/test-suites" element={<TestSuites />} />
         <Route path="/test-suites/:id" element={<SuiteDetail />} />
@@ -20,7 +23,7 @@ export default function App() {
         <Route path="/bugs/:id" element={<BugDetail />} />
         <Route path="/test-runs" element={<TestRuns />} />
         <Route path="/test-runs/:id" element={<TestRunDetail />} />
-        <Route path="*" element={<Navigate to="/test-cases" replace />} />
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </BrowserRouter>
   );
