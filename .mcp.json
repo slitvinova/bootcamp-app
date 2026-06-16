@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "discord": {
+      "command": "/bin/bash",
+      "args": ["/Users/svetalitvinova/mcp-discord/run.sh"]
+    },
+    "slack": {
+      "command": "/bin/bash",
+      "args": ["/Users/svetalitvinova/mcp-slack-run.sh"]
+    }
+  }
+}

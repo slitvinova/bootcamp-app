@@ -3,3 +3,4 @@ server/data.json
 dist/
 .DS_Store
 *.log
+.env
