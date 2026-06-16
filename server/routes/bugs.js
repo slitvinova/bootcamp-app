@@ -61,7 +61,7 @@ router.put('/:id', (req, res) => {
   const existing = db.bugs.get(req.params.id);
   if (!existing) return res.status(404).json({ success: false, data: null, error: 'Bug not found.' });
 
-  const { title, description, severity, priority, steps_to_reproduce, expected, actual, environment } = req.body;
+  const { title, description, severity, priority, steps_to_reproduce, expected, actual, environment, github_issue_url } = req.body;
 
   if (title !== undefined && !title.trim()) {
     return res.status(400).json({ success: false, data: null, error: 'title cannot be empty.' });
@@ -88,6 +88,7 @@ router.put('/:id', (req, res) => {
     expected:            expected            ?? existing.expected,
     actual:              actual              ?? existing.actual,
     environment:         environment         ?? existing.environment,
+    github_issue_url:    github_issue_url    ?? existing.github_issue_url,
   });
   res.json({ success: true, data: updated, error: null });
 });
