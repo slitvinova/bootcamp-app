@@ -28,6 +28,7 @@ export default function TestRunDetail() {
   const [loadError, setLoadError] = useState('');
   const [saving, setSaving] = useState({});
   const [notes, setNotes] = useState({});
+  const [generatingReport, setGeneratingReport] = useState(false);
 
   useEffect(() => {
     fetch(`/api/test-runs/${id}`)
@@ -66,6 +67,21 @@ export default function TestRunDetail() {
     }
   };
 
+  const generateReport = async () => {
+    setGeneratingReport(true);
+    try {
+      const res = await fetch('/api/reports', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ run_id: Number(id) }),
+      });
+      const json = await res.json();
+      if (json.success) navigate(`/reports/${json.data.id}`);
+    } finally {
+      setGeneratingReport(false);
+    }
+  };
+
   const formatDate = (iso) => iso
     ? new Date(iso).toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
     : '—';
@@ -98,9 +114,18 @@ export default function TestRunDetail() {
                 <span className="text-xs text-yellow-600 font-medium">{run.skip_count} skipped</span>
               </div>
             </div>
-            <div className="text-right text-xs text-gray-400">
-              <p>Started {formatDate(run.start_time)}</p>
-              {run.end_time && <p>Ended {formatDate(run.end_time)}</p>}
+            <div className="flex flex-col items-end gap-2">
+              <button
+                onClick={generateReport}
+                disabled={generatingReport}
+                className="px-3 py-1.5 text-xs font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:opacity-50"
+              >
+                {generatingReport ? 'Generating…' : 'Generate Report'}
+              </button>
+              <div className="text-right text-xs text-gray-400">
+                <p>Started {formatDate(run.start_time)}</p>
+                {run.end_time && <p>Ended {formatDate(run.end_time)}</p>}
+              </div>
             </div>
           </div>
         </div>

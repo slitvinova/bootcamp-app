@@ -16,6 +16,7 @@ export default function Nav() {
         <NavLink to="/test-suites" className={link}>Test Suites</NavLink>
         <NavLink to="/test-runs" className={link}>Test Runs</NavLink>
         <NavLink to="/bugs" className={link}>Bugs</NavLink>
+        <NavLink to="/reports" className={link}>Reports</NavLink>
       </div>
     </nav>
   );

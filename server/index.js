@@ -15,6 +15,7 @@ app.use('/api/suites', require('./routes/suites'));
 app.use('/api/bugs', require('./routes/bugs'));
 app.use('/api/test-runs', require('./routes/test-runs'));
 app.use('/api/dashboard', require('./routes/dashboard'));
+app.use('/api/reports', require('./routes/reports'));
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

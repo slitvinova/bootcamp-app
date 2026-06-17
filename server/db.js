@@ -145,6 +145,32 @@ function buildTestRunSeed(ts) {
   return { runs, results };
 }
 
+function buildReportSeed(ts) {
+  const { runs, results } = buildTestRunSeed(ts);
+  const run = runs[0];
+  const rr = results.filter(r => r.run_id === run.id);
+  return [{
+    id: 1,
+    run_id: run.id,
+    suite_name: run.suite_name,
+    run_date: run.start_time,
+    total_count: rr.length,
+    passed_count: rr.filter(r => r.result === 'passed').length,
+    failed_count: rr.filter(r => r.result === 'failed').length,
+    skipped_count: rr.filter(r => r.result === 'skipped').length,
+    results: rr.map(r => ({
+      test_case_id: r.test_case_id,
+      title: r.test_case_title,
+      severity: r.test_case_severity,
+      result: r.result,
+      notes: r.notes,
+      github_issue_url: r.github_issue_url,
+      duration_ms: r.duration_ms,
+    })),
+    generated_at: ts,
+  }];
+}
+
 function buildBugActivities(ts) {
   const d2ago = new Date(new Date(ts).getTime() - 2 * 24 * 60 * 60 * 1000).toISOString();
   const d1ago = new Date(new Date(ts).getTime() - 1 * 24 * 60 * 60 * 1000).toISOString();
@@ -187,6 +213,8 @@ function read() {
       nextTestRunResultId: 4,
       testRuns: buildTestRunSeed(ts).runs,
       testRunResults: buildTestRunSeed(ts).results,
+      nextReportId: 2,
+      reports: buildReportSeed(ts),
     };
     fs.writeFileSync(DB_PATH, JSON.stringify(initial, null, 2));
     return initial;
@@ -223,6 +251,43 @@ function read() {
     data.nextTestRunResultId = 4;
     data.testRuns = seed.runs;
     data.testRunResults = seed.results;
+    fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
+  }
+
+  // Migration: add reports table if missing
+  if (!data.reports) {
+    const ts = now();
+    const run1 = (data.testRuns || []).find(r => r.id === 1);
+    if (run1) {
+      const rr = (data.testRunResults || [])
+        .filter(r => r.run_id === 1)
+        .sort((a, b) => a.sort_order - b.sort_order)
+        .map(r => ({
+          test_case_id: r.test_case_id,
+          title: r.test_case_title,
+          severity: r.test_case_severity,
+          result: r.result,
+          notes: r.notes,
+          github_issue_url: r.github_issue_url,
+          duration_ms: r.duration_ms,
+        }));
+      data.reports = [{
+        id: 1,
+        run_id: 1,
+        suite_name: run1.suite_name,
+        run_date: run1.start_time,
+        total_count: rr.length,
+        passed_count: rr.filter(r => r.result === 'passed').length,
+        failed_count: rr.filter(r => r.result === 'failed').length,
+        skipped_count: rr.filter(r => r.result === 'skipped').length,
+        results: rr,
+        generated_at: ts,
+      }];
+      data.nextReportId = 2;
+    } else {
+      data.reports = [];
+      data.nextReportId = 1;
+    }
     fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
   }
 
@@ -581,6 +646,7 @@ const db = {
     },
 
     updateResult(runId, resultId, fields) {
+
       const data = read();
       const rIdx = (data.testRunResults || [])
         .findIndex(r => r.id === Number(resultId) && r.run_id === Number(runId));
@@ -618,6 +684,54 @@ const db = {
       const run = data.testRuns[runIdx];
       const results = all.sort((a, b) => a.sort_order - b.sort_order);
       return { ...run, results };
+    },
+  },
+  // ── Reports ───────────────────────────────────────────────────────────────
+
+  reports: {
+    list() {
+      return (read().reports || [])
+        .slice()
+        .sort((a, b) => (b.generated_at > a.generated_at ? 1 : -1));
+    },
+
+    get(id) {
+      return (read().reports || []).find(r => r.id === Number(id)) || null;
+    },
+
+    create(runId) {
+      const data = read();
+      const run = (data.testRuns || []).find(r => r.id === Number(runId));
+      if (!run) return null;
+      const rr = (data.testRunResults || [])
+        .filter(r => r.run_id === Number(runId))
+        .sort((a, b) => a.sort_order - b.sort_order)
+        .map(r => ({
+          test_case_id: r.test_case_id,
+          title: r.test_case_title,
+          severity: r.test_case_severity,
+          result: r.result,
+          notes: r.notes,
+          github_issue_url: r.github_issue_url,
+          duration_ms: r.duration_ms,
+        }));
+      const ts = now();
+      const report = {
+        id: data.nextReportId++,
+        run_id: Number(runId),
+        suite_name: run.suite_name,
+        run_date: run.start_time,
+        total_count: rr.length,
+        passed_count: rr.filter(r => r.result === 'passed').length,
+        failed_count: rr.filter(r => r.result === 'failed').length,
+        skipped_count: rr.filter(r => r.result === 'skipped').length,
+        results: rr,
+        generated_at: ts,
+      };
+      data.reports = data.reports || [];
+      data.reports.push(report);
+      write(data);
+      return report;
     },
   },
 };

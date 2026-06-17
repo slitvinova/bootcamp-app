@@ -8,6 +8,8 @@ import Bugs from './pages/Bugs';
 import BugDetail from './pages/BugDetail';
 import TestRuns from './pages/TestRuns';
 import TestRunDetail from './pages/TestRunDetail';
+import Reports from './pages/Reports';
+import ReportDetail from './pages/ReportDetail';
 
 export default function App() {
   return (
@@ -23,6 +25,8 @@ export default function App() {
         <Route path="/bugs/:id" element={<BugDetail />} />
         <Route path="/test-runs" element={<TestRuns />} />
         <Route path="/test-runs/:id" element={<TestRunDetail />} />
+        <Route path="/reports" element={<Reports />} />
+        <Route path="/reports/:id" element={<ReportDetail />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </BrowserRouter>
