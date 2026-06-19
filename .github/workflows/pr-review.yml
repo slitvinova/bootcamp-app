@@ -21,6 +21,7 @@ jobs:
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           show_full_output: true
+          allowed_tools: "Write,Bash,Read"
           prompt: |
             Use the /qa-review skill to review the changes introduced by this pull request.
             Run `git diff origin/${{ github.base_ref }}...HEAD` to see what changed.
