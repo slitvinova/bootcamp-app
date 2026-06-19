@@ -27,8 +27,15 @@ jobs:
             Group findings by severity (Critical → Major → Minor → Trivial) per the skill format.
             If no issues found, say so explicitly.
 
-            When your review is complete, post it as a PR comment using the
-            mcp__github__add_issue_comment tool with:
-              owner: ${{ github.repository_owner }}
-              repo: ${{ github.event.repository.name }}
-              issue_number: ${{ github.event.pull_request.number }}
+            Write your complete review text to /tmp/qa-review.md — review content only, no extra commentary.
+
+      - name: Post review comment
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -f /tmp/qa-review.md ]; then
+            gh pr comment ${{ github.event.pull_request.number }} \
+              --repo ${{ github.repository }} \
+              --body-file /tmp/qa-review.md
+          fi
