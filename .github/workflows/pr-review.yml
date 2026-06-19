@@ -20,16 +20,13 @@ jobs:
       - uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          show_full_output: true
           claude_args: "--dangerously-skip-permissions"
           prompt: |
             Use the /qa-review skill to review the changes introduced by this pull request.
             Run `git diff origin/${{ github.base_ref }}...HEAD` to see what changed.
             Group findings by severity (Critical → Major → Minor → Trivial) per the skill format.
             If no issues found, say so explicitly.
-
-            Write your complete review text to qa-review-output.md in the current working directory.
-            Use the Write tool with file_path "qa-review-output.md". Review content only, no extra commentary.
+            Write the review to qa-review-output.md using the Write tool.
 
       - name: Post review comment
         if: always()
