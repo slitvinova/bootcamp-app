@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useSettings } from '../context/SettingsContext';
 
 const RUN_STATUS_BADGE = {
   pending:   'bg-gray-100 text-gray-500',
@@ -23,6 +24,7 @@ const SEVERITY_BADGE = {
 export default function TestRunDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { settings } = useSettings() || {};
   const [run, setRun] = useState(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
@@ -48,6 +50,7 @@ export default function TestRunDetail() {
   }, [id]);
 
   const setResult = async (resultId, result) => {
+    const prevStatus = run?.status;
     setSaving(s => ({ ...s, [resultId]: true }));
     try {
       const res = await fetch(`/api/test-runs/${id}/results/${resultId}`, {
@@ -61,6 +64,9 @@ export default function TestRunDetail() {
         const n = {};
         json.data.results.forEach(r => { n[r.id] = r.notes || ''; });
         setNotes(n);
+        if (prevStatus !== 'completed' && json.data.status === 'completed' && settings?.auto_generate_report_after_run) {
+          generateReport();
+        }
       }
     } finally {
       setSaving(s => ({ ...s, [resultId]: false }));

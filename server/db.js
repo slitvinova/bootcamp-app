@@ -215,6 +215,13 @@ function read() {
       testRunResults: buildTestRunSeed(ts).results,
       nextReportId: 2,
       reports: buildReportSeed(ts),
+      user_preferences: {
+        theme: 'system',
+        default_severity_for_new_bugs: 'Minor',
+        default_page_size: 20,
+        timezone: '',
+        auto_generate_report_after_run: true,
+      },
     };
     fs.writeFileSync(DB_PATH, JSON.stringify(initial, null, 2));
     return initial;
@@ -288,6 +295,18 @@ function read() {
       data.reports = [];
       data.nextReportId = 1;
     }
+    fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
+  }
+
+  // Migration: add user_preferences if missing
+  if (!data.user_preferences) {
+    data.user_preferences = {
+      theme: 'system',
+      default_severity_for_new_bugs: 'Minor',
+      default_page_size: 20,
+      timezone: '',
+      auto_generate_report_after_run: true,
+    };
     fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
   }
 
@@ -733,6 +752,18 @@ const db = {
       write(data);
       return report;
     },
+  },
+};
+
+db.settings = {
+  get() {
+    return read().user_preferences;
+  },
+  update(fields) {
+    const data = read();
+    Object.assign(data.user_preferences, fields);
+    write(data);
+    return data.user_preferences;
   },
 };
 

@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import TestCaseModal from '../components/TestCaseModal';
+import { useSettings } from '../context/SettingsContext';
 
 const SEVERITY_BADGE = {
   Critical: 'bg-red-100 text-red-700 border border-red-300',
@@ -22,6 +24,7 @@ function SortIcon({ field, sortField, sortOrder }) {
 }
 
 export default function TestCases() {
+  const navigate = useNavigate();
   const [rows, setRows] = useState([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -34,7 +37,8 @@ export default function TestCases() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingCase, setEditingCase] = useState(null);
 
-  const LIMIT = 20;
+  const { settings } = useSettings() || {};
+  const LIMIT = settings?.default_page_size || 20;
   const totalPages = Math.max(1, Math.ceil(total / LIMIT));
 
   useEffect(() => {
@@ -46,10 +50,11 @@ export default function TestCases() {
   }, [search]);
 
   useEffect(() => { setPage(1); }, [filterStatus, sortField, sortOrder]);
+  useEffect(() => { setPage(1); }, [LIMIT]);
 
   const fetchCases = useCallback(async () => {
     setLoading(true);
-    const params = new URLSearchParams({ page, sort: sortField, order: sortOrder });
+    const params = new URLSearchParams({ page, limit: LIMIT, sort: sortField, order: sortOrder });
     if (filterStatus) params.set('status', filterStatus);
     if (debouncedSearch) params.set('search', debouncedSearch);
     const res = await fetch(`/api/test-cases?${params}`);
@@ -59,7 +64,7 @@ export default function TestCases() {
       setTotal(json.data.total);
     }
     setLoading(false);
-  }, [page, sortField, sortOrder, filterStatus, debouncedSearch]);
+  }, [page, LIMIT, sortField, sortOrder, filterStatus, debouncedSearch]);
 
   useEffect(() => { fetchCases(); }, [fetchCases]);
 
@@ -96,12 +101,27 @@ export default function TestCases() {
             <h1 className="text-2xl font-semibold text-gray-900">Test Cases</h1>
             <p className="text-sm text-gray-500 mt-0.5">{total} total</p>
           </div>
-          <button
-            onClick={openNew}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors"
-          >
-            + New Test Case
-          </button>
+          <div className="flex gap-2">
+            <a
+              href="/api/test-cases/export"
+              download="test-cases.csv"
+              className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+            >
+              Export CSV
+            </a>
+            <button
+              onClick={() => navigate('/test-cases/import')}
+              className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+            >
+              Import CSV
+            </button>
+            <button
+              onClick={openNew}
+              className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors"
+            >
+              + New Test Case
+            </button>
+          </div>
         </div>
 
         {/* Filters */}

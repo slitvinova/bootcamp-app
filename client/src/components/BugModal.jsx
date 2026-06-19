@@ -1,16 +1,24 @@
 import { useState, useEffect } from 'react';
+import { useSettings } from '../context/SettingsContext';
 
 const SEVERITIES = ['Critical', 'Major', 'Minor', 'Trivial'];
 const PRIORITIES = ['high', 'medium', 'low'];
 
 export default function BugModal({ bug, onClose, onSaved }) {
   const isEdit = Boolean(bug);
+  const { settings } = useSettings() || {};
   const [form, setForm] = useState({
     title: '', description: '', severity: 'Major', priority: 'medium',
     steps: '', expected: '', actual: '', environment: '',
   });
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!isEdit && settings?.default_severity_for_new_bugs) {
+      setForm(f => ({ ...f, severity: settings.default_severity_for_new_bugs }));
+    }
+  }, [settings?.default_severity_for_new_bugs, isEdit]);
 
   useEffect(() => {
     if (bug) {

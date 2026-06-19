@@ -5,17 +5,35 @@ const db = require('../db');
 const VALID_SEVERITIES = ['Critical', 'Major', 'Minor', 'Trivial'];
 const VALID_STATUSES = ['draft', 'ready', 'passed', 'failed', 'skipped'];
 
+function csvCell(value) {
+  const s = value == null ? '' : String(value);
+  return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+
+router.get('/export', (req, res) => {
+  const { rows } = db.list({ limit: 99999 });
+  const headers = ['title', 'severity', 'scenario', 'status'];
+  const lines = [
+    headers.join(','),
+    ...rows.map(r => headers.map(h => csvCell(r[h])).join(',')),
+  ];
+  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+  res.setHeader('Content-Disposition', 'attachment; filename="test-cases.csv"');
+  res.send(lines.join('\r\n'));
+});
+
 router.get('/', (req, res) => {
-  const { page = 1, status, search, sort = 'updated_at', order = 'desc' } = req.query;
+  const { page = 1, limit = 20, status, search, sort = 'updated_at', order = 'desc' } = req.query;
+  const LIMIT = [10, 20, 50, 100].includes(Number(limit)) ? Number(limit) : 20;
   const result = db.list({
     page: Number(page),
-    limit: 20,
+    limit: LIMIT,
     status,
     search,
     sort,
     order,
   });
-  res.json({ success: true, data: { ...result, page: Number(page), limit: 20 }, error: null });
+  res.json({ success: true, data: { ...result, page: Number(page), limit: LIMIT }, error: null });
 });
 
 router.post('/', (req, res) => {

@@ -10,6 +10,8 @@ import TestRuns from './pages/TestRuns';
 import TestRunDetail from './pages/TestRunDetail';
 import Reports from './pages/Reports';
 import ReportDetail from './pages/ReportDetail';
+import TestCaseImport from './pages/TestCaseImport';
+import Settings from './pages/Settings';
 
 export default function App() {
   return (
@@ -19,6 +21,7 @@ export default function App() {
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/test-cases" element={<TestCases />} />
+        <Route path="/test-cases/import" element={<TestCaseImport />} />
         <Route path="/test-suites" element={<TestSuites />} />
         <Route path="/test-suites/:id" element={<SuiteDetail />} />
         <Route path="/bugs" element={<Bugs />} />
@@ -27,6 +30,7 @@ export default function App() {
         <Route path="/test-runs/:id" element={<TestRunDetail />} />
         <Route path="/reports" element={<Reports />} />
         <Route path="/reports/:id" element={<ReportDetail />} />
+        <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </BrowserRouter>
