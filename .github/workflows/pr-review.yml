@@ -24,5 +24,11 @@ jobs:
           prompt: |
             Use the /qa-review skill to review the changes introduced by this pull request.
             Run `git diff origin/${{ github.base_ref }}...HEAD` to see what changed.
-            Post your findings as a single comment, grouped by severity (Critical → Major → Minor → Trivial),
-            following the format defined in the qa-review skill. If there are no issues, say so explicitly.
+            Group findings by severity (Critical → Major → Minor → Trivial) per the skill format.
+            If no issues found, say so explicitly.
+
+            When your review is complete, post it as a PR comment using the
+            mcp__github__add_issue_comment tool with:
+              owner: ${{ github.repository_owner }}
+              repo: ${{ github.event.repository.name }}
+              issue_number: ${{ github.event.pull_request.number }}
