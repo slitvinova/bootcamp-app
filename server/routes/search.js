@@ -1,3 +1,4 @@
+// Unified search across test cases, bugs, and suites.
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
