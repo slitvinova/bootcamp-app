@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSettings } from '../context/SettingsContext';
+import { SHORTCUTS } from '../shortcuts';
 
 const TIMEZONES = typeof Intl.supportedValuesOf === 'function'
   ? Intl.supportedValuesOf('timeZone')
@@ -156,6 +157,30 @@ export default function Settings() {
                 </p>
               </div>
             </label>
+          </section>
+
+          {/* Keyboard Shortcuts */}
+          <section className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-5">
+            <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-4">Keyboard Shortcuts</h2>
+            <div className="space-y-5">
+              {SHORTCUTS.map(group => (
+                <div key={group.group}>
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                    {group.group}
+                  </p>
+                  <div className="space-y-2">
+                    {group.items.map(item => (
+                      <div key={item.display} className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">{item.description}</span>
+                        <kbd className="text-xs font-mono bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded px-2 py-0.5 text-gray-700 dark:text-gray-300">
+                          {item.display}
+                        </kbd>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           </section>
 
           {/* Save */}

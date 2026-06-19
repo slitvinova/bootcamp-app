@@ -18,6 +18,7 @@ app.use('/api/test-runs', require('./routes/test-runs'));
 app.use('/api/dashboard', require('./routes/dashboard'));
 app.use('/api/reports', require('./routes/reports'));
 app.use('/api/settings', require('./routes/settings'));
+app.use('/api/search', require('./routes/search'));
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

@@ -12,11 +12,13 @@ import Reports from './pages/Reports';
 import ReportDetail from './pages/ReportDetail';
 import TestCaseImport from './pages/TestCaseImport';
 import Settings from './pages/Settings';
+import KeyboardManager from './components/KeyboardManager';
 
 export default function App() {
   return (
     <BrowserRouter>
       <Nav />
+      <KeyboardManager />
       <Routes>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/dashboard" element={<Dashboard />} />
