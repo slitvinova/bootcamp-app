@@ -27,15 +27,16 @@ jobs:
             Group findings by severity (Critical → Major → Minor → Trivial) per the skill format.
             If no issues found, say so explicitly.
 
-            Write your complete review text to /tmp/qa-review.md — review content only, no extra commentary.
+            Write your complete review text to qa-review-output.md in the current working directory.
+            Use the Write tool with file_path "qa-review-output.md". Review content only, no extra commentary.
 
       - name: Post review comment
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if [ -f /tmp/qa-review.md ]; then
+          if [ -f qa-review-output.md ]; then
             gh pr comment ${{ github.event.pull_request.number }} \
               --repo ${{ github.repository }} \
-              --body-file /tmp/qa-review.md
+              --body-file qa-review-output.md
           fi
