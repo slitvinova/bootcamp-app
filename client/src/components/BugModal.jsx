@@ -75,77 +75,77 @@ export default function BugModal({ bug, onClose, onSaved }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div ref={panelRef} role="dialog" aria-modal="true" aria-labelledby="bug-modal-title" className="relative bg-slate-800 rounded shadow-xl w-full max-w-lg mx-4 max-h-[90vh] flex flex-col">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700 flex-shrink-0">
-          <h2 id="bug-modal-title" className="text-lg font-semibold text-white">{isEdit ? 'Edit Bug' : 'Report Bug'}</h2>
-          <button onClick={onClose} aria-label="Close" className="text-slate-400 hover:text-slate-300 text-xl leading-none">×</button>
+      <div ref={panelRef} role="dialog" aria-modal="true" aria-labelledby="bug-modal-title" className="relative bg-white dark:bg-slate-800 rounded shadow-xl w-full max-w-lg mx-4 max-h-[90vh] flex flex-col">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex-shrink-0">
+          <h2 id="bug-modal-title" className="text-lg font-semibold text-slate-900 dark:text-white">{isEdit ? 'Edit Bug' : 'Report Bug'}</h2>
+          <button onClick={onClose} aria-label="Close" className="text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:text-slate-300 text-xl leading-none">×</button>
         </div>
         <form onSubmit={handleSubmit} className="px-6 py-4 space-y-4 overflow-y-auto flex-1">
           {error && <div className="text-sm text-red-400 bg-red-900/40 border border-red-800 rounded px-3 py-2">{error}</div>}
 
           <div>
-            <label className="block text-sm font-medium text-slate-200 mb-1">Title *</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Title *</label>
             <input type="text" value={form.title} onChange={set('title')}
-              className="w-full border border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-slate-300 dark:border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Short description of what is broken" />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-200 mb-1">Description *</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Description *</label>
             <textarea value={form.description} onChange={set('description')} rows={3}
-              className="w-full border border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              className="w-full border border-slate-300 dark:border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
               placeholder="Full description of the issue" />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-slate-200 mb-1">Severity *</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Severity *</label>
               <select value={form.severity} onChange={set('severity')}
-                className="w-full border border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                className="w-full border border-slate-300 dark:border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                 {SEVERITIES.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-200 mb-1">Priority</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Priority</label>
               <select value={form.priority} onChange={set('priority')}
-                className="w-full border border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                className="w-full border border-slate-300 dark:border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                 {PRIORITIES.map(p => <option key={p} value={p}>{p.charAt(0).toUpperCase() + p.slice(1)}</option>)}
               </select>
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-200 mb-1">Steps to Reproduce</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Steps to Reproduce</label>
             <textarea value={form.steps} onChange={set('steps')} rows={4}
-              className="w-full border border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              className="w-full border border-slate-300 dark:border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
               placeholder={"One step per line:\nOpen the app\nClick Login\nObserve the error"} />
-            <p className="text-xs text-slate-400 mt-1">One step per line</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">One step per line</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-200 mb-1">Expected</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Expected</label>
             <input type="text" value={form.expected} onChange={set('expected')}
-              className="w-full border border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-slate-300 dark:border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="What should happen" />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-200 mb-1">Actual</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Actual</label>
             <input type="text" value={form.actual} onChange={set('actual')}
-              className="w-full border border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-slate-300 dark:border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="What actually happens" />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-200 mb-1">Environment</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Environment</label>
             <input type="text" value={form.environment} onChange={set('environment')}
-              className="w-full border border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-slate-300 dark:border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="e.g. iOS 16.4, Safari, iPhone 13" />
           </div>
 
           <div className="flex justify-end gap-3 pt-2 pb-2">
             <button type="button" onClick={onClose}
-              className="px-4 py-2 border border-slate-600 rounded-md text-sm text-slate-200 hover:bg-slate-900">Cancel</button>
+              className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900">Cancel</button>
             <button type="submit" disabled={saving}
               className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-60">
               {saving ? 'Saving…' : isEdit ? 'Save Changes' : 'Report Bug'}

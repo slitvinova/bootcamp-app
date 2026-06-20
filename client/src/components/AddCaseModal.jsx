@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 
 const SEVERITY_BADGE = {
-  Critical: 'bg-red-900/40 text-red-300 border border-red-800',
-  Major: 'bg-blue-900/40 text-blue-300 border border-blue-800',
-  Minor: 'bg-yellow-900/40 text-yellow-300 border border-yellow-800',
-  Trivial: 'bg-slate-700 text-slate-500 border border-slate-600',
+  Critical: 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 border border-red-300 dark:border-red-800',
+  Major: 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-800',
+  Minor: 'bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-800',
+  Trivial: 'bg-slate-100 dark:bg-slate-700 text-slate-500 border border-slate-300 dark:border-slate-600',
 };
 
 export default function AddCaseModal({ suiteId, existingIds, onClose, onAdded }) {
@@ -44,24 +44,24 @@ export default function AddCaseModal({ suiteId, existingIds, onClose, onAdded })
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className="relative bg-slate-800 rounded shadow-xl w-full max-w-lg mx-4 max-h-[80vh] flex flex-col">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700 flex-shrink-0">
-          <h2 className="text-lg font-semibold text-white">Add Test Case</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-300 text-xl leading-none">×</button>
+      <div className="relative bg-white dark:bg-slate-800 rounded shadow-xl w-full max-w-lg mx-4 max-h-[80vh] flex flex-col">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex-shrink-0">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Add Test Case</h2>
+          <button onClick={onClose} className="text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:text-slate-300 text-xl leading-none">×</button>
         </div>
         <div className="overflow-y-auto flex-1">
           {loading ? (
-            <p className="text-center py-10 text-slate-400 text-sm">Loading…</p>
+            <p className="text-center py-10 text-slate-500 dark:text-slate-400 text-sm">Loading…</p>
           ) : fetchError ? (
             <p className="text-center py-10 text-red-500 text-sm">{fetchError}</p>
           ) : available.length === 0 ? (
-            <p className="text-center py-10 text-slate-400 text-sm">All test cases are already in this suite.</p>
+            <p className="text-center py-10 text-slate-500 dark:text-slate-400 text-sm">All test cases are already in this suite.</p>
           ) : (
-            <ul className="divide-y divide-slate-700">
+            <ul className="divide-y divide-slate-200 dark:divide-slate-700">
               {available.map(tc => (
-                <li key={tc.id} className="flex items-center justify-between px-6 py-3 hover:bg-slate-900">
+                <li key={tc.id} className="flex items-center justify-between px-6 py-3 hover:bg-slate-50 dark:hover:bg-slate-900">
                   <div className="flex-1 min-w-0 mr-4">
-                    <p className="text-sm font-medium text-white">{tc.title}</p>
+                    <p className="text-sm font-medium text-slate-900 dark:text-white">{tc.title}</p>
                     <span className={`inline-block mt-1 px-2 py-0.5 rounded text-xs font-medium ${SEVERITY_BADGE[tc.severity]}`}>
                       {tc.severity}
                     </span>
@@ -78,8 +78,8 @@ export default function AddCaseModal({ suiteId, existingIds, onClose, onAdded })
             </ul>
           )}
         </div>
-        <div className="px-6 py-3 border-t border-slate-700 flex-shrink-0">
-          <button onClick={onClose} className="text-sm text-slate-500 hover:text-white">Done</button>
+        <div className="px-6 py-3 border-t border-slate-200 dark:border-slate-700 flex-shrink-0">
+          <button onClick={onClose} className="text-sm text-slate-500 hover:text-slate-900 dark:hover:text-white">Done</button>
         </div>
       </div>
     </div>

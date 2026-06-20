@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import SuiteModal from '../components/SuiteModal';
 
 const STATUS_BADGE = {
-  'draft': 'bg-slate-700 text-slate-500',
-  'ready': 'bg-blue-900/40 text-blue-300',
-  'in-progress': 'bg-amber-900/40 text-amber-300',
-  'passed': 'bg-green-900/40 text-green-300',
-  'failed': 'bg-red-900/40 text-red-300',
+  'draft': 'bg-slate-100 dark:bg-slate-700 text-slate-500',
+  'ready': 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300',
+  'in-progress': 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300',
+  'passed': 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300',
+  'failed': 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300',
 };
 
 export default function TestSuites() {
@@ -53,11 +53,11 @@ export default function TestSuites() {
   });
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-white dark:bg-slate-900">
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-semibold text-white">Test Suites</h1>
+            <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Test Suites</h1>
             <p className="text-sm text-slate-500 mt-0.5">{suites.length} total</p>
           </div>
           <button
@@ -72,7 +72,7 @@ export default function TestSuites() {
           <select
             value={filterStatus}
             onChange={e => setFilterStatus(e.target.value)}
-            className="border border-slate-600 rounded-md px-3 py-2 text-sm bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="border border-slate-300 dark:border-slate-600 rounded-md px-3 py-2 text-sm bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
             <option value="">All statuses</option>
             <option value="draft">Draft</option>
@@ -83,34 +83,34 @@ export default function TestSuites() {
           </select>
         </div>
 
-        <div className="bg-slate-800 rounded border border-slate-700 overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 overflow-hidden">
           <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-slate-900 border-b border-slate-700">
+            <thead className="bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
               <tr>
-                <th className="text-left px-4 py-3 font-medium text-slate-300">Name</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-300">Feature</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-300">Status</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-300">Cases</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-300">Updated</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-300">Name</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-300">Feature</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-300">Status</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-300">Cases</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-300">Updated</th>
                 <th className="px-4 py-3 w-10" />
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-700">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
               {loading ? (
-                <tr><td colSpan={6} className="text-center py-12 text-slate-400">Loading…</td></tr>
+                <tr><td colSpan={6} className="text-center py-12 text-slate-500 dark:text-slate-400">Loading…</td></tr>
               ) : fetchError ? (
                 <tr><td colSpan={6} className="text-center py-12 text-red-500 text-sm">{fetchError}</td></tr>
               ) : suites.length === 0 ? (
-                <tr><td colSpan={6} className="text-center py-12 text-slate-400">No suites found.</td></tr>
+                <tr><td colSpan={6} className="text-center py-12 text-slate-500 dark:text-slate-400">No suites found.</td></tr>
               ) : (
                 suites.map(s => (
                   <tr
                     key={s.id}
                     onClick={() => navigate(`/test-suites/${s.id}`)}
-                    className="hover:bg-slate-900 cursor-pointer transition-colors"
+                    className="hover:bg-slate-50 dark:hover:bg-slate-900 cursor-pointer transition-colors"
                   >
-                    <td className="px-4 py-3 font-medium text-white">{s.name}</td>
+                    <td className="px-4 py-3 font-medium text-slate-900 dark:text-white">{s.name}</td>
                     <td className="px-4 py-3 text-slate-500">{s.feature}</td>
                     <td className="px-4 py-3">
                       <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium capitalize ${STATUS_BADGE[s.status]}`}>
@@ -122,7 +122,7 @@ export default function TestSuites() {
                     <td className="px-4 py-3 text-right">
                       <button
                         onClick={(e) => handleDelete(e, s.id)}
-                        className="text-slate-400 hover:text-red-400 transition-colors"
+                        className="text-slate-500 dark:text-slate-400 hover:text-red-400 transition-colors"
                         title="Delete"
                         aria-label="Delete suite"
                       >

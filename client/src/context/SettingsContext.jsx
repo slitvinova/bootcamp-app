@@ -18,6 +18,7 @@ export function SettingsProvider({ children }) {
 
   useEffect(() => {
     if (!settings) return;
+    localStorage.setItem('runlog-theme', settings.theme || 'system');
     const root = document.documentElement;
     if (settings.theme === 'dark') {
       root.classList.add('dark');

@@ -63,12 +63,12 @@ export default function TestCaseModal({ testCase, onClose, onSaved }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div ref={panelRef} role="dialog" aria-modal="true" aria-labelledby="tc-modal-title" className="relative bg-slate-800 rounded shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700">
-          <h2 id="tc-modal-title" className="text-lg font-semibold text-white">
+      <div ref={panelRef} role="dialog" aria-modal="true" aria-labelledby="tc-modal-title" className="relative bg-white dark:bg-slate-800 rounded shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+          <h2 id="tc-modal-title" className="text-lg font-semibold text-slate-900 dark:text-white">
             {isEdit ? 'Edit Test Case' : 'New Test Case'}
           </h2>
-          <button onClick={onClose} aria-label="Close" className="text-slate-400 hover:text-slate-300 text-xl leading-none">×</button>
+          <button onClick={onClose} aria-label="Close" className="text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:text-slate-300 text-xl leading-none">×</button>
         </div>
 
         <form onSubmit={handleSubmit} className="px-6 py-4 space-y-4">
@@ -79,19 +79,19 @@ export default function TestCaseModal({ testCase, onClose, onSaved }) {
           )}
 
           <div>
-            <label className="block text-sm font-medium text-slate-200 mb-1">Title *</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Title *</label>
             <input
               type="text"
               value={form.title}
               onChange={set('title')}
-              className="w-full border border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-slate-300 dark:border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Short, imperative description"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-200 mb-1">
-              Scenario * <span className="font-normal text-slate-400">— Given / When / Then / And</span>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">
+              Scenario * <span className="font-normal text-slate-500 dark:text-slate-400">— Given / When / Then / And</span>
             </label>
             <GherkinEditor
               value={form.scenario}
@@ -103,21 +103,21 @@ export default function TestCaseModal({ testCase, onClose, onSaved }) {
 
           <div className="flex gap-4">
             <div className="flex-1">
-              <label className="block text-sm font-medium text-slate-200 mb-1">Severity *</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Severity *</label>
               <select
                 value={form.severity}
                 onChange={set('severity')}
-                className="w-full border border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-slate-300 dark:border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 {SEVERITIES.map(s => <option key={s}>{s}</option>)}
               </select>
             </div>
             <div className="flex-1">
-              <label className="block text-sm font-medium text-slate-200 mb-1">Status</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Status</label>
               <select
                 value={form.status}
                 onChange={set('status')}
-                className="w-full border border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-slate-300 dark:border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 {STATUSES.map(s => <option key={s}>{s}</option>)}
               </select>
@@ -128,7 +128,7 @@ export default function TestCaseModal({ testCase, onClose, onSaved }) {
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border border-slate-600 rounded-md text-sm text-slate-200 hover:bg-slate-900"
+              className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900"
             >
               Cancel
             </button>

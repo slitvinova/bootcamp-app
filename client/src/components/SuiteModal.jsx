@@ -38,45 +38,45 @@ export default function SuiteModal({ suite, onClose, onSaved }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className="relative bg-slate-800 rounded shadow-xl w-full max-w-md mx-4">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700">
-          <h2 className="text-lg font-semibold text-white">{isEdit ? 'Edit Suite' : 'New Suite'}</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-300 text-xl leading-none">×</button>
+      <div className="relative bg-white dark:bg-slate-800 rounded shadow-xl w-full max-w-md mx-4">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{isEdit ? 'Edit Suite' : 'New Suite'}</h2>
+          <button onClick={onClose} className="text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:text-slate-300 text-xl leading-none">×</button>
         </div>
         <form onSubmit={handleSubmit} className="px-6 py-4 space-y-4">
           {error && <div className="text-sm text-red-400 bg-red-900/40 border border-red-800 rounded px-3 py-2">{error}</div>}
           <div>
-            <label className="block text-sm font-medium text-slate-200 mb-1">Name *</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Name *</label>
             <input
               type="text"
               value={form.name}
               onChange={set('name')}
-              className="w-full border border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-slate-300 dark:border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="e.g. Login Smoke Suite"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-200 mb-1">Feature *</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Feature *</label>
             <input
               type="text"
               value={form.feature}
               onChange={set('feature')}
-              className="w-full border border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-slate-300 dark:border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="e.g. login, rewards, profile"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-200 mb-1">Status</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Status</label>
             <select
               value={form.status}
               onChange={set('status')}
-              className="w-full border border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-slate-300 dark:border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
           </div>
           <div className="flex justify-end gap-3 pt-2 pb-2">
-            <button type="button" onClick={onClose} className="px-4 py-2 border border-slate-600 rounded-md text-sm text-slate-200 hover:bg-slate-900">Cancel</button>
+            <button type="button" onClick={onClose} className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900">Cancel</button>
             <button type="submit" disabled={saving} className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-60">
               {saving ? 'Saving…' : isEdit ? 'Save Changes' : 'Create Suite'}
             </button>

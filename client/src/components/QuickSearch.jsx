@@ -93,7 +93,7 @@ export default function QuickSearch({ onClose }) {
     if (!items || items.length === 0) return null;
     return (
       <div key={type}>
-        <p className="px-4 pt-3 pb-1 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+        <p className="px-4 pt-3 pb-1 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
           {TYPE_LABEL[type]}s
         </p>
         {items.map(item => {
@@ -105,18 +105,18 @@ export default function QuickSearch({ onClose }) {
               onMouseEnter={() => setFocusedIdx(idx)}
               onClick={() => go({ type, ...item })}
               className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${
-                isFocused ? 'bg-blue-900/40' : 'hover:bg-slate-900'
+                isFocused ? 'bg-blue-900/40' : 'hover:bg-slate-50 dark:hover:bg-slate-900'
               }`}
             >
               <span className={`text-xs font-medium px-1.5 py-0.5 rounded flex-shrink-0 ${TYPE_COLOR[type]}`}>
                 {TYPE_LABEL[type][0]}
               </span>
-              <span className="text-sm text-slate-200 truncate flex-1">{item.title || item.name}</span>
+              <span className="text-sm text-slate-700 dark:text-slate-200 truncate flex-1">{item.title || item.name}</span>
               {item.severity && (
-                <span className="text-xs text-slate-400 flex-shrink-0">{item.severity}</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 flex-shrink-0">{item.severity}</span>
               )}
               {item.status && !item.severity && (
-                <span className="text-xs text-slate-400 flex-shrink-0 capitalize">{item.status}</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 flex-shrink-0 capitalize">{item.status}</span>
               )}
             </button>
           );
@@ -128,10 +128,10 @@ export default function QuickSearch({ onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh]">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className="relative bg-slate-800 rounded-xl shadow-2xl w-full max-w-xl mx-4 overflow-hidden">
+      <div className="relative bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-xl mx-4 overflow-hidden">
         {/* Input */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-slate-700">
-          <svg className="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-slate-200 dark:border-slate-700">
+          <svg className="w-4 h-4 text-slate-500 dark:text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
           <input
@@ -142,10 +142,10 @@ export default function QuickSearch({ onClose }) {
             onKeyDown={handleKeyDown}
             placeholder="Search test cases, bugs, suites…"
             aria-label="Search"
-            className="flex-1 text-sm text-white placeholder-slate-400 outline-none bg-transparent"
+            className="flex-1 text-sm text-slate-900 dark:text-white placeholder-slate-400 outline-none bg-transparent"
           />
-          {loading && <span className="text-xs text-slate-400">Searching…</span>}
-          {!loading && <kbd className="text-xs text-slate-400 border border-slate-700 rounded px-1.5 py-0.5">Esc</kbd>}
+          {loading && <span className="text-xs text-slate-500 dark:text-slate-400">Searching…</span>}
+          {!loading && <kbd className="text-xs text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 rounded px-1.5 py-0.5">Esc</kbd>}
         </div>
 
         {/* Results */}
@@ -158,19 +158,19 @@ export default function QuickSearch({ onClose }) {
         )}
 
         {noResults && (
-          <div className="px-4 py-8 text-center text-sm text-slate-400">
-            No results for <span className="font-medium text-slate-300">"{query}"</span>
+          <div className="px-4 py-8 text-center text-sm text-slate-500 dark:text-slate-400">
+            No results for <span className="font-medium text-slate-600 dark:text-slate-300">"{query}"</span>
           </div>
         )}
 
         {!results && !loading && (
-          <div className="px-4 py-5 text-center text-xs text-slate-400">
+          <div className="px-4 py-5 text-center text-xs text-slate-500 dark:text-slate-400">
             Type at least 2 characters to search
           </div>
         )}
 
         {/* Footer */}
-        <div className="border-t border-slate-700 px-4 py-2 flex gap-4 text-xs text-slate-400">
+        <div className="border-t border-slate-200 dark:border-slate-700 px-4 py-2 flex gap-4 text-xs text-slate-500 dark:text-slate-400">
           <span><kbd className="font-mono">↑↓</kbd> navigate</span>
           <span><kbd className="font-mono">↵</kbd> open</span>
           <span><kbd className="font-mono">Esc</kbd> close</span>

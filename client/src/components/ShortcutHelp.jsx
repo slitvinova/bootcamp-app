@@ -14,22 +14,22 @@ export default function ShortcutHelp({ onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div ref={panelRef} role="dialog" aria-modal="true" aria-labelledby="shortcut-modal-title" className="relative bg-slate-800 rounded-xl shadow-2xl w-full max-w-sm mx-4">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-700">
-          <h2 id="shortcut-modal-title" className="text-sm font-semibold text-white">Keyboard Shortcuts</h2>
-          <button onClick={onClose} aria-label="Close" className="text-slate-400 hover:text-slate-300 text-xl leading-none">×</button>
+      <div ref={panelRef} role="dialog" aria-modal="true" aria-labelledby="shortcut-modal-title" className="relative bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-sm mx-4">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-slate-700">
+          <h2 id="shortcut-modal-title" className="text-sm font-semibold text-slate-900 dark:text-white">Keyboard Shortcuts</h2>
+          <button onClick={onClose} aria-label="Close" className="text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:text-slate-300 text-xl leading-none">×</button>
         </div>
         <div className="px-5 py-4 space-y-5">
           {SHORTCUTS.map(group => (
             <div key={group.group}>
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+              <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
                 {group.group}
               </p>
               <div className="space-y-2">
                 {group.items.map(item => (
                   <div key={item.display} className="flex items-center justify-between">
-                    <span className="text-sm text-slate-300">{item.description}</span>
-                    <kbd className="text-xs font-mono bg-slate-700 border border-slate-700 rounded px-2 py-0.5 text-slate-200">
+                    <span className="text-sm text-slate-600 dark:text-slate-300">{item.description}</span>
+                    <kbd className="text-xs font-mono bg-slate-700 border border-slate-200 dark:border-slate-700 rounded px-2 py-0.5 text-slate-700 dark:text-slate-200">
                       {item.display}
                     </kbd>
                   </div>

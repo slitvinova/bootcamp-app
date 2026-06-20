@@ -17,7 +17,7 @@ function desktopClass({ isActive }) {
     'text-sm font-medium whitespace-nowrap pb-[3px] border-b-2 transition-colors ' +
     (isActive
       ? 'border-blue-400 text-blue-400'
-      : 'border-transparent text-slate-300 hover:text-white')
+      : 'border-transparent text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white')
   );
 }
 
@@ -26,7 +26,7 @@ function mobileClass({ isActive }) {
     'block w-full py-3 pl-3 pr-4 text-sm font-medium border-l-2 transition-colors ' +
     (isActive
       ? 'border-blue-400 text-blue-400'
-      : 'border-transparent text-slate-300 hover:text-white')
+      : 'border-transparent text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white')
   );
 }
 
@@ -34,7 +34,7 @@ export default function Nav() {
   const [open, setOpen] = useState(false);
 
   return (
-    <nav className="bg-slate-900 border-b border-slate-700">
+    <nav className="bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
 
         {/* ── Top bar ──────────────────────────────────────── */}
@@ -46,7 +46,7 @@ export default function Nav() {
               <rect width="22" height="22" rx="2" className="fill-blue-500"/>
               <path d="M7 7L17 11L7 15Z" className="fill-white"/>
             </svg>
-            <span className="text-sm tracking-tight text-white">
+            <span className="text-sm tracking-tight text-slate-900 dark:text-white">
               <span className="font-semibold">Run</span><span className="font-light">Log</span>
             </span>
           </div>
@@ -62,7 +62,7 @@ export default function Nav() {
 
           {/* Mobile hamburger */}
           <button
-            className="ml-auto mb-2 md:hidden p-2 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className="ml-auto mb-2 md:hidden p-2 rounded-md text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             onClick={() => setOpen(o => !o)}
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}
@@ -82,7 +82,7 @@ export default function Nav() {
 
       {/* ── Mobile menu ──────────────────────────────────── */}
       {open && (
-        <div className="md:hidden border-t border-slate-700 bg-slate-900 px-4 py-2">
+        <div className="md:hidden border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2">
           {LINKS.map(({ to, label }) => (
             <NavLink
               key={to}

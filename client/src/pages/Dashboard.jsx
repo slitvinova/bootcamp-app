@@ -1,4 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
+
+function useIsDark() {
+  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
+  useEffect(() => {
+    const obs = new MutationObserver(() => setIsDark(document.documentElement.classList.contains('dark')));
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => obs.disconnect();
+  }, []);
+  return isDark;
+}
 import { useNavigate } from 'react-router-dom';
 
 // ── Formatters ────────────────────────────────────────────────────────────────
@@ -42,9 +52,9 @@ function formatActivity(item) {
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 const STATUS_BADGE = {
-  pending:   'bg-slate-700 text-slate-500',
-  running:   'bg-amber-900/40 text-amber-300',
-  completed: 'bg-green-900/40 text-green-300',
+  pending:   'bg-slate-100 dark:bg-slate-700 text-slate-500',
+  running:   'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300',
+  completed: 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300',
 };
 
 const COVERAGE_COLORS = {
@@ -77,17 +87,17 @@ function donutArcPath(cx, cy, ro, ri, a0, a1) {
 function MetricCard({ label, value, sub, loading }) {
   if (loading) {
     return (
-      <div className="bg-slate-800 rounded border border-slate-700 p-5 animate-pulse">
+      <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-5 animate-pulse">
         <div className="h-3 bg-slate-700 rounded w-24 mb-3" />
         <div className="h-8 bg-slate-700 rounded w-16" />
       </div>
     );
   }
   return (
-    <div className="bg-slate-800 rounded border border-slate-700 p-5">
+    <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-5">
       <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">{label}</p>
-      <p className="text-3xl font-semibold text-white">{value ?? '—'}</p>
-      {sub && <p className="text-xs text-slate-400 mt-1">{sub}</p>}
+      <p className="text-3xl font-semibold text-slate-900 dark:text-white">{value ?? '—'}</p>
+      {sub && <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{sub}</p>}
     </div>
   );
 }
@@ -106,7 +116,7 @@ function SkeletonRow({ cols }) {
 
 function ChartEmpty({ message }) {
   return (
-    <div className="h-32 flex items-center justify-center text-sm text-slate-400">{message}</div>
+    <div className="h-32 flex items-center justify-center text-sm text-slate-500 dark:text-slate-400">{message}</div>
   );
 }
 
@@ -122,10 +132,13 @@ function ChartSkeleton() {
 
 // ── SVG chart components ──────────────────────────────────────────────────────
 
-function PassRateSVG({ runs }) {
+function PassRateSVG({ runs, isDark }) {
   if (runs.length < 2) {
     return <ChartEmpty message="Need at least 2 test runs to show the trend." />;
   }
+
+  const gridColor = isDark ? '#334155' : '#e2e8f0';
+  const labelColor = '#64748b';
 
   const W = 480, H = 110;
   const PL = 32, PR = 8, PT = 8, PB = 22;
@@ -140,12 +153,12 @@ function PassRateSVG({ runs }) {
     <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ overflow: 'visible' }}>
       {[0, 50, 100].map(v => (
         <g key={v}>
-          <line x1={PL} y1={y(v)} x2={W - PR} y2={y(v)} stroke="#334155" strokeWidth="1" />
-          <text x={PL - 4} y={y(v) + 4} textAnchor="end" fontSize="9" fill="#64748b">{v}%</text>
+          <line x1={PL} y1={y(v)} x2={W - PR} y2={y(v)} stroke={gridColor} strokeWidth="1" />
+          <text x={PL - 4} y={y(v) + 4} textAnchor="end" fontSize="9" fill={labelColor}>{v}%</text>
         </g>
       ))}
       {runs.map((r, i) => (
-        <text key={i} x={x(i)} y={H - 5} textAnchor="middle" fontSize="9" fill="#64748b">
+        <text key={i} x={x(i)} y={H - 5} textAnchor="middle" fontSize="9" fill={labelColor}>
           {r.date}
         </text>
       ))}
@@ -164,10 +177,14 @@ function PassRateSVG({ runs }) {
   );
 }
 
-function BugsSVG({ weeks }) {
+function BugsSVG({ weeks, isDark }) {
   if (!weeks.some(w => w.opened > 0 || w.closed > 0)) {
     return <ChartEmpty message="No bug activity in the last 8 weeks." />;
   }
+
+  const gridColor = isDark ? '#334155' : '#e2e8f0';
+  const labelColor = '#64748b';
+  const legendColor = isDark ? '#94a3b8' : '#64748b';
 
   const W = 560, H = 110;
   const PL = 28, PR = 8, PT = 8, PB = 22;
@@ -190,8 +207,8 @@ function BugsSVG({ weeks }) {
     <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ overflow: 'visible' }}>
       {ticks.map(v => (
         <g key={v}>
-          <line x1={PL} y1={y(v)} x2={W - PR} y2={y(v)} stroke="#334155" strokeWidth="1" />
-          <text x={PL - 4} y={y(v) + 4} textAnchor="end" fontSize="9" fill="#64748b">{v}</text>
+          <line x1={PL} y1={y(v)} x2={W - PR} y2={y(v)} stroke={gridColor} strokeWidth="1" />
+          <text x={PL - 4} y={y(v) + 4} textAnchor="end" fontSize="9" fill={labelColor}>{v}</text>
         </g>
       ))}
       {weeks.map((w, i) => (
@@ -202,21 +219,27 @@ function BugsSVG({ weeks }) {
           {w.closed > 0 && (
             <rect x={cx(i)} y={y(w.closed)} width={barW} height={y0 - y(w.closed)} fill="#34d399" rx="1" />
           )}
-          <text x={PL + i * groupW + groupW / 2} y={H - 5} textAnchor="middle" fontSize="9" fill="#64748b">
+          <text x={PL + i * groupW + groupW / 2} y={H - 5} textAnchor="middle" fontSize="9" fill={labelColor}>
             {w.week}
           </text>
         </g>
       ))}
       <rect x={W - PR - 112} y={PT + 1} width="8" height="8" fill="#f87171" rx="1" />
-      <text x={W - PR - 101} y={PT + 8} fontSize="9" fill="#94a3b8">Opened</text>
+      <text x={W - PR - 101} y={PT + 8} fontSize="9" fill={legendColor}>Opened</text>
       <rect x={W - PR - 57} y={PT + 1} width="8" height="8" fill="#34d399" rx="1" />
-      <text x={W - PR - 46} y={PT + 8} fontSize="9" fill="#94a3b8">Closed</text>
+      <text x={W - PR - 46} y={PT + 8} fontSize="9" fill={legendColor}>Closed</text>
     </svg>
   );
 }
 
-function CoverageSVG({ segments }) {
+function CoverageSVG({ segments, isDark }) {
   if (!segments.length) return <ChartEmpty message="No test cases yet." />;
+
+  const holeFill    = isDark ? '#1e293b' : '#ffffff';
+  const totalColor  = isDark ? '#f1f5f9' : '#0f172a';
+  const labelColor  = isDark ? '#cbd5e1' : '#334155';
+  const countColor  = isDark ? '#94a3b8' : '#64748b';
+  const fallback    = isDark ? '#334155' : '#d1d5db';
 
   const total = segments.reduce((s, d) => s + d.count, 0);
   const W = 280, H = 140;
@@ -233,28 +256,28 @@ function CoverageSVG({ segments }) {
     <svg viewBox={`0 0 ${W} ${H}`} width="100%">
       {arcs.length === 1 ? (
         <>
-          <circle cx={CX} cy={CY} r={RO} fill={COVERAGE_COLORS[arcs[0].status] || '#334155'} />
-          <circle cx={CX} cy={CY} r={RI} fill="#1e293b" />
+          <circle cx={CX} cy={CY} r={RO} fill={COVERAGE_COLORS[arcs[0].status] || fallback} />
+          <circle cx={CX} cy={CY} r={RI} fill={holeFill} />
         </>
       ) : (
         arcs.map(seg => (
           <path
             key={seg.status}
             d={donutArcPath(CX, CY, RO, RI, seg.start, seg.end)}
-            fill={COVERAGE_COLORS[seg.status] || '#334155'}
+            fill={COVERAGE_COLORS[seg.status] || fallback}
           />
         ))
       )}
-      <text x={CX} y={CY + 7} textAnchor="middle" fontSize="17" fontWeight="600" fill="#f1f5f9">
+      <text x={CX} y={CY + 7} textAnchor="middle" fontSize="17" fontWeight="600" fill={totalColor}>
         {total}
       </text>
       {arcs.map((seg, i) => (
         <g key={seg.status} transform={`translate(140, ${i * 22 + 18})`}>
-          <rect width="9" height="9" rx="2" fill={COVERAGE_COLORS[seg.status] || '#334155'} />
-          <text x="13" y="8.5" fontSize="10" fill="#cbd5e1">
+          <rect width="9" height="9" rx="2" fill={COVERAGE_COLORS[seg.status] || fallback} />
+          <text x="13" y="8.5" fontSize="10" fill={labelColor}>
             {seg.status.charAt(0).toUpperCase() + seg.status.slice(1)}
           </text>
-          <text x="127" y="8.5" textAnchor="end" fontSize="10" fill="#94a3b8">{seg.count}</text>
+          <text x="127" y="8.5" textAnchor="end" fontSize="10" fill={countColor}>{seg.count}</text>
         </g>
       ))}
     </svg>
@@ -265,6 +288,7 @@ function CoverageSVG({ segments }) {
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const isDark = useIsDark();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -317,11 +341,11 @@ export default function Dashboard() {
   const trendRuns = (trends?.pass_rate_trend || []).filter(r => r.pass_rate !== null);
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-white dark:bg-slate-900">
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-semibold text-white">Dashboard</h1>
-          <span className="text-xs text-slate-400">Auto-refreshes every 30s</span>
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Dashboard</h1>
+          <span className="text-xs text-slate-500 dark:text-slate-400">Auto-refreshes every 30s</span>
         </div>
 
         {error && !loading && (
@@ -363,12 +387,12 @@ export default function Dashboard() {
 
         {/* Recent runs + activity */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 bg-slate-800 rounded border border-slate-700 overflow-hidden">
-            <div className="px-4 py-3 border-b border-slate-700">
-              <h2 className="text-sm font-semibold text-slate-200">Recent Test Runs</h2>
+          <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700">
+              <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-200">Recent Test Runs</h2>
             </div>
-            <table className="min-w-full divide-y divide-slate-700">
-              <thead className="bg-slate-900">
+            <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+              <thead className="bg-white dark:bg-slate-900">
                 <tr>
                   <th className="px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wide">Suite</th>
                   <th className="px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wide">Status</th>
@@ -377,18 +401,18 @@ export default function Dashboard() {
                   <th className="px-4 py-2" />
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-700">
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
                 {loading
                   ? Array.from({ length: 3 }).map((_, i) => <SkeletonRow key={i} cols={5} />)
                   : recentRuns?.length > 0
                     ? recentRuns.map(run => (
-                        <tr key={run.id} className="hover:bg-slate-900">
+                        <tr key={run.id} className="hover:bg-slate-50 dark:hover:bg-slate-900">
                           <td className="px-4 py-3">
-                            <p className="text-sm font-medium text-white">{run.suite_name}</p>
-                            <p className="text-xs text-slate-400">#{run.id}</p>
+                            <p className="text-sm font-medium text-slate-900 dark:text-white">{run.suite_name}</p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">#{run.id}</p>
                           </td>
                           <td className="px-4 py-3">
-                            <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium capitalize ${STATUS_BADGE[run.status] || 'bg-slate-700 text-slate-500'}`}>
+                            <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium capitalize ${STATUS_BADGE[run.status] || 'bg-slate-100 dark:bg-slate-700 text-slate-500'}`}>
                               {run.status}
                             </span>
                           </td>
@@ -413,8 +437,8 @@ export default function Dashboard() {
                     : (
                         <tr>
                           <td colSpan={5} className="px-4 py-10 text-center">
-                            <p className="text-sm text-slate-400">No test runs yet.</p>
-                            <p className="text-xs text-slate-300 mt-1">Open a test suite and click Run Tests to start one.</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">No test runs yet.</p>
+                            <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">Open a test suite and click Run Tests to start one.</p>
                           </td>
                         </tr>
                       )
@@ -423,11 +447,11 @@ export default function Dashboard() {
             </table>
           </div>
 
-          <div className="bg-slate-800 rounded border border-slate-700 overflow-hidden">
-            <div className="px-4 py-3 border-b border-slate-700">
-              <h2 className="text-sm font-semibold text-slate-200">Recent Activity</h2>
+          <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700">
+              <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-200">Recent Activity</h2>
             </div>
-            <ul className="divide-y divide-slate-700">
+            <ul className="divide-y divide-slate-200 dark:divide-slate-700">
               {loading
                 ? Array.from({ length: 5 }).map((_, i) => (
                     <li key={i} className="px-4 py-3 animate-pulse">
@@ -438,17 +462,17 @@ export default function Dashboard() {
                 : recentActivity?.length > 0
                   ? recentActivity.map(item => (
                       <li key={item.id} className="px-4 py-3">
-                        <p className="text-sm text-slate-200">{formatActivity(item)}</p>
+                        <p className="text-sm text-slate-700 dark:text-slate-200">{formatActivity(item)}</p>
                         {item.bug_title && (
-                          <p className="text-xs text-slate-400 mt-0.5 truncate">{item.bug_title}</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">{item.bug_title}</p>
                         )}
-                        <p className="text-xs text-slate-300 mt-0.5">{timeAgo(item.timestamp)}</p>
+                        <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">{timeAgo(item.timestamp)}</p>
                       </li>
                     ))
                   : (
                       <li className="px-4 py-10 text-center">
-                        <p className="text-sm text-slate-400">No activity yet.</p>
-                        <p className="text-xs text-slate-300 mt-1">Activity appears when bugs are updated or commented on.</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">No activity yet.</p>
+                        <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">Activity appears when bugs are updated or commented on.</p>
                       </li>
                     )
               }
@@ -458,25 +482,25 @@ export default function Dashboard() {
 
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-          <div className="lg:col-span-2 bg-slate-800 rounded border border-slate-700 p-4">
-            <h2 className="text-sm font-semibold text-slate-200 mb-3">Pass Rate Trend</h2>
-            {trendsLoading ? <ChartSkeleton /> : <PassRateSVG runs={trendRuns} />}
+          <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-4">
+            <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-3">Pass Rate Trend</h2>
+            {trendsLoading ? <ChartSkeleton /> : <PassRateSVG runs={trendRuns} isDark={isDark} />}
           </div>
 
-          <div className="bg-slate-800 rounded border border-slate-700 p-4">
-            <h2 className="text-sm font-semibold text-slate-200 mb-3">Test Coverage by Status</h2>
+          <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-4">
+            <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-3">Test Coverage by Status</h2>
             {trendsLoading ? (
               <div className="animate-pulse h-32 flex items-center justify-center">
                 <div className="h-24 w-24 bg-slate-700 rounded-full" />
               </div>
             ) : (
-              <CoverageSVG segments={trends?.coverage || []} />
+              <CoverageSVG segments={trends?.coverage || []} isDark={isDark} />
             )}
           </div>
 
-          <div className="lg:col-span-3 bg-slate-800 rounded border border-slate-700 p-4">
-            <h2 className="text-sm font-semibold text-slate-200 mb-3">Bugs Opened vs Closed — Last 8 Weeks</h2>
-            {trendsLoading ? <ChartSkeleton /> : <BugsSVG weeks={trends?.bugs_by_week || []} />}
+          <div className="lg:col-span-3 bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-4">
+            <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-3">Bugs Opened vs Closed — Last 8 Weeks</h2>
+            {trendsLoading ? <ChartSkeleton /> : <BugsSVG weeks={trends?.bugs_by_week || []} isDark={isDark} />}
           </div>
         </div>
       </div>

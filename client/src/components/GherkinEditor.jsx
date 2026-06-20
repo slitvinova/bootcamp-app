@@ -1,25 +1,42 @@
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
-const KEYWORD_COLORS = {
+function useIsDark() {
+  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
+  useEffect(() => {
+    const obs = new MutationObserver(() => setIsDark(document.documentElement.classList.contains('dark')));
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => obs.disconnect();
+  }, []);
+  return isDark;
+}
+
+const KEYWORD_COLORS_DARK = {
   given: '#a78bfa',
-  when: '#60a5fa',
-  then: '#4ade80',
-  and: '#22d3ee',
-  but: '#f87171',
+  when:  '#60a5fa',
+  then:  '#4ade80',
+  and:   '#22d3ee',
+  but:   '#f87171',
 };
 
-function highlight(text) {
+const KEYWORD_COLORS_LIGHT = {
+  given: '#7c3aed',
+  when:  '#2563eb',
+  then:  '#16a34a',
+  and:   '#0891b2',
+  but:   '#dc2626',
+};
+
+function highlight(text, colors) {
   return text
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(
       /^(given|when|then|and|but)(?=\s|$)/gim,
-      (kw) => `<span style="color:${KEYWORD_COLORS[kw.toLowerCase()]};font-weight:700">${kw}</span>`
+      (kw) => `<span style="color:${colors[kw.toLowerCase()]};font-weight:700">${kw}</span>`
     );
 }
 
-// Applied to both backdrop and textarea to keep them pixel-perfect in sync.
 const SHARED_STYLE = {
   fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
   fontSize: '0.875rem',
@@ -33,6 +50,10 @@ const SHARED_STYLE = {
 
 export default function GherkinEditor({ value, onChange, rows = 6, placeholder }) {
   const backdropRef = useRef(null);
+  const isDark = useIsDark();
+
+  const colors = isDark ? KEYWORD_COLORS_DARK : KEYWORD_COLORS_LIGHT;
+  const textColor = isDark ? '#f1f5f9' : '#0f172a';
 
   const syncScroll = (e) => {
     if (backdropRef.current) {
@@ -41,8 +62,7 @@ export default function GherkinEditor({ value, onChange, rows = 6, placeholder }
   };
 
   return (
-    <div className="relative border border-slate-600 rounded-md focus-within:ring-2 focus-within:ring-blue-500 bg-slate-800 overflow-hidden">
-      {/* Backdrop renders highlighted text behind the transparent textarea */}
+    <div className="relative border border-slate-300 dark:border-slate-600 rounded-md focus-within:ring-2 focus-within:ring-blue-500 bg-white dark:bg-slate-800 overflow-hidden">
       <div
         ref={backdropRef}
         aria-hidden="true"
@@ -56,12 +76,11 @@ export default function GherkinEditor({ value, onChange, rows = 6, placeholder }
           whiteSpace: 'pre-wrap',
           wordBreak: 'break-word',
           overflow: 'hidden',
-          color: '#f1f5f9',
+          color: textColor,
           pointerEvents: 'none',
         }}
-        dangerouslySetInnerHTML={{ __html: highlight(value) + '​' }}
+        dangerouslySetInnerHTML={{ __html: highlight(value, colors) + '​' }}
       />
-      {/* Textarea is transparent so the backdrop shows through */}
       <textarea
         value={value}
         onChange={onChange}
@@ -73,7 +92,7 @@ export default function GherkinEditor({ value, onChange, rows = 6, placeholder }
           ...SHARED_STYLE,
           background: 'transparent',
           color: 'transparent',
-          caretColor: '#f1f5f9',
+          caretColor: textColor,
           zIndex: 1,
         }}
       />

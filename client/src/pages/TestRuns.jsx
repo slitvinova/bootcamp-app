@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const STATUS_BADGE = {
-  pending:   'bg-slate-700 text-slate-500',
-  running:   'bg-amber-900/40 text-amber-300',
-  completed: 'bg-green-900/40 text-green-300',
+  pending:   'bg-slate-100 dark:bg-slate-700 text-slate-500',
+  running:   'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300',
+  completed: 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300',
 };
 
 export default function TestRuns() {
@@ -60,14 +60,14 @@ export default function TestRuns() {
     : '—';
 
   if (loading) return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center text-slate-400">Loading…</div>
+    <div className="min-h-screen bg-white dark:bg-slate-900 flex items-center justify-center text-slate-500 dark:text-slate-400">Loading…</div>
   );
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-white dark:bg-slate-900">
       <div className="max-w-5xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-semibold text-white">Test Runs</h1>
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Test Runs</h1>
           <button
             onClick={openModal}
             className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700"
@@ -77,15 +77,15 @@ export default function TestRuns() {
         </div>
 
         {runs.length === 0 ? (
-          <div className="bg-slate-800 rounded border border-slate-700 py-16 text-center">
-            <p className="text-slate-400 text-sm">No test runs yet.</p>
-            <p className="text-slate-400 text-xs mt-1">Click "+ New Run" to start one.</p>
+          <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 py-16 text-center">
+            <p className="text-slate-500 dark:text-slate-400 text-sm">No test runs yet.</p>
+            <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">Click "+ New Run" to start one.</p>
           </div>
         ) : (
-          <div className="bg-slate-800 rounded border border-slate-700 overflow-hidden">
+          <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 overflow-hidden">
             <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-slate-700">
-              <thead className="bg-slate-900">
+          <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+              <thead className="bg-white dark:bg-slate-900">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wide">Suite</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wide">Status</th>
@@ -94,12 +94,12 @@ export default function TestRuns() {
                   <th className="px-4 py-3" />
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-700">
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
                 {runs.map(run => (
-                  <tr key={run.id} className="hover:bg-slate-900">
+                  <tr key={run.id} className="hover:bg-slate-50 dark:hover:bg-slate-900">
                     <td className="px-4 py-3">
-                      <p className="text-sm font-medium text-white">{run.suite_name}</p>
-                      <p className="text-xs text-slate-400">#{run.id}</p>
+                      <p className="text-sm font-medium text-slate-900 dark:text-white">{run.suite_name}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">#{run.id}</p>
                     </td>
                     <td className="px-4 py-3">
                       <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium capitalize ${STATUS_BADGE[run.status]}`}>
@@ -117,7 +117,7 @@ export default function TestRuns() {
                     <td className="px-4 py-3 text-right">
                       <button
                         onClick={() => navigate(`/test-runs/${run.id}`)}
-                        className="px-3 py-1 text-xs font-medium text-blue-400 hover:text-blue-300 border border-blue-800 rounded hover:bg-slate-700"
+                        className="px-3 py-1 text-xs font-medium text-blue-400 hover:text-blue-300 border border-blue-800 rounded hover:bg-slate-100 dark:hover:bg-slate-700"
                       >
                         View
                       </button>
@@ -133,18 +133,18 @@ export default function TestRuns() {
 
       {modalOpen && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-          <div className="bg-slate-800 rounded shadow-xl w-full max-w-sm p-6">
-            <h2 className="text-base font-semibold text-white mb-4">New Test Run</h2>
+          <div className="bg-white dark:bg-slate-800 rounded shadow-xl w-full max-w-sm p-6">
+            <h2 className="text-base font-semibold text-slate-900 dark:text-white mb-4">New Test Run</h2>
 
             {createError && (
               <p className="text-sm text-red-400 bg-red-900/40 border border-red-800 rounded px-3 py-2 mb-3">{createError}</p>
             )}
 
-            <label className="block text-xs font-medium text-slate-300 mb-1">Suite</label>
+            <label className="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Suite</label>
             <select
               value={selectedSuite}
               onChange={e => setSelectedSuite(e.target.value)}
-              className="w-full border border-slate-600 rounded-md px-3 py-2 text-sm bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-400 mb-5"
+              className="w-full border border-slate-300 dark:border-slate-600 rounded-md px-3 py-2 text-sm bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-400 mb-5"
             >
               {suites.map(s => (
                 <option key={s.id} value={s.id}>{s.name}</option>
@@ -154,14 +154,14 @@ export default function TestRuns() {
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => setModalOpen(false)}
-                className="px-4 py-2 text-sm text-slate-300 border border-slate-600 rounded-md hover:bg-slate-900"
+                className="px-4 py-2 text-sm text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-600 rounded-md hover:bg-slate-50 dark:hover:bg-slate-900"
               >
                 Cancel
               </button>
               <button
                 onClick={handleCreate}
                 disabled={creating || !selectedSuite}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
+                className="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
               >
                 {creating ? 'Creating…' : 'Start Run'}
               </button>
