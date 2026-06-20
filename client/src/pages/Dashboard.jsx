@@ -42,14 +42,14 @@ function formatActivity(item) {
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 const STATUS_BADGE = {
-  pending:   'bg-gray-100 text-gray-500',
+  pending:   'bg-stone-100 text-stone-500',
   running:   'bg-amber-100 text-amber-700',
   completed: 'bg-green-100 text-green-700',
 };
 
 const COVERAGE_COLORS = {
   draft:   '#d1d5db',
-  ready:   '#818cf8',
+  ready:   '#f97316',
   passed:  '#4ade80',
   failed:  '#f87171',
   skipped: '#fbbf24',
@@ -77,17 +77,17 @@ function donutArcPath(cx, cy, ro, ri, a0, a1) {
 function MetricCard({ label, value, sub, loading }) {
   if (loading) {
     return (
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-5 animate-pulse">
-        <div className="h-3 bg-gray-200 rounded w-24 mb-3" />
-        <div className="h-8 bg-gray-200 rounded w-16" />
+      <div className="bg-white rounded border border-stone-200 p-5 animate-pulse">
+        <div className="h-3 bg-stone-200 rounded w-24 mb-3" />
+        <div className="h-8 bg-stone-200 rounded w-16" />
       </div>
     );
   }
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-5">
-      <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{label}</p>
-      <p className="text-3xl font-semibold text-gray-900">{value ?? '—'}</p>
-      {sub && <p className="text-xs text-gray-400 mt-1">{sub}</p>}
+    <div className="bg-white rounded border border-stone-200 p-5">
+      <p className="text-xs font-medium text-stone-500 uppercase tracking-wide mb-1">{label}</p>
+      <p className="text-3xl font-semibold text-stone-900">{value ?? '—'}</p>
+      {sub && <p className="text-xs text-stone-400 mt-1">{sub}</p>}
     </div>
   );
 }
@@ -97,7 +97,7 @@ function SkeletonRow({ cols }) {
     <tr className="animate-pulse">
       {Array.from({ length: cols }).map((_, i) => (
         <td key={i} className="px-4 py-3">
-          <div className="h-3 bg-gray-200 rounded w-full" />
+          <div className="h-3 bg-stone-200 rounded w-full" />
         </td>
       ))}
     </tr>
@@ -106,7 +106,7 @@ function SkeletonRow({ cols }) {
 
 function ChartEmpty({ message }) {
   return (
-    <div className="h-32 flex items-center justify-center text-sm text-gray-400">{message}</div>
+    <div className="h-32 flex items-center justify-center text-sm text-stone-400">{message}</div>
   );
 }
 
@@ -114,7 +114,7 @@ function ChartSkeleton() {
   return (
     <div className="h-32 flex items-end gap-1.5 px-2 pb-1 animate-pulse">
       {[40, 65, 50, 80, 55, 45, 72, 48].map((h, i) => (
-        <div key={i} className="flex-1 bg-gray-200 rounded-t" style={{ height: `${h}%` }} />
+        <div key={i} className="flex-1 bg-stone-200 rounded-t" style={{ height: `${h}%` }} />
       ))}
     </div>
   );
@@ -152,13 +152,13 @@ function PassRateSVG({ runs }) {
       <polyline
         points={points}
         fill="none"
-        stroke="#6366f1"
+        stroke="#ea580c"
         strokeWidth="2"
         strokeLinejoin="round"
         strokeLinecap="round"
       />
       {runs.map((r, i) => (
-        <circle key={i} cx={x(i)} cy={y(r.pass_rate)} r="3.5" fill="#6366f1" stroke="white" strokeWidth="1.5" />
+        <circle key={i} cx={x(i)} cy={y(r.pass_rate)} r="3.5" fill="#ea580c" stroke="white" strokeWidth="1.5" />
       ))}
     </svg>
   );
@@ -317,15 +317,15 @@ export default function Dashboard() {
   const trendRuns = (trends?.pass_rate_trend || []).filter(r => r.pass_rate !== null);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-stone-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
-          <span className="text-xs text-gray-400">Auto-refreshes every 30s</span>
+          <h1 className="text-2xl font-semibold text-stone-900">Dashboard</h1>
+          <span className="text-xs text-stone-400">Auto-refreshes every 30s</span>
         </div>
 
         {error && !loading && (
-          <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-700 mb-6">
+          <div className="bg-red-50 border border-red-200 rounded px-4 py-3 text-sm text-red-700 mb-6">
             {error}
             <button onClick={() => fetchMetrics(true)} className="ml-3 underline hover:no-underline">
               Retry
@@ -363,32 +363,32 @@ export default function Dashboard() {
 
         {/* Recent runs + activity */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-            <div className="px-4 py-3 border-b border-gray-100">
-              <h2 className="text-sm font-semibold text-gray-700">Recent Test Runs</h2>
+          <div className="lg:col-span-2 bg-white rounded border border-stone-200 overflow-hidden">
+            <div className="px-4 py-3 border-b border-stone-100">
+              <h2 className="text-sm font-semibold text-stone-700">Recent Test Runs</h2>
             </div>
-            <table className="min-w-full divide-y divide-gray-100">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-stone-100">
+              <thead className="bg-stone-50">
                 <tr>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Suite</th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Status</th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Results</th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Started</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-stone-500 uppercase tracking-wide">Suite</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-stone-500 uppercase tracking-wide">Status</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-stone-500 uppercase tracking-wide">Results</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-stone-500 uppercase tracking-wide">Started</th>
                   <th className="px-4 py-2" />
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-stone-50">
                 {loading
                   ? Array.from({ length: 3 }).map((_, i) => <SkeletonRow key={i} cols={5} />)
                   : recentRuns?.length > 0
                     ? recentRuns.map(run => (
-                        <tr key={run.id} className="hover:bg-gray-50">
+                        <tr key={run.id} className="hover:bg-stone-50">
                           <td className="px-4 py-3">
-                            <p className="text-sm font-medium text-gray-900">{run.suite_name}</p>
-                            <p className="text-xs text-gray-400">#{run.id}</p>
+                            <p className="text-sm font-medium text-stone-900">{run.suite_name}</p>
+                            <p className="text-xs text-stone-400">#{run.id}</p>
                           </td>
                           <td className="px-4 py-3">
-                            <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium capitalize ${STATUS_BADGE[run.status] || 'bg-gray-100 text-gray-500'}`}>
+                            <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium capitalize ${STATUS_BADGE[run.status] || 'bg-stone-100 text-stone-500'}`}>
                               {run.status}
                             </span>
                           </td>
@@ -399,11 +399,11 @@ export default function Dashboard() {
                               <span className="text-yellow-600 font-medium">{run.skip_count}S</span>
                             </div>
                           </td>
-                          <td className="px-4 py-3 text-xs text-gray-500">{formatDate(run.start_time)}</td>
+                          <td className="px-4 py-3 text-xs text-stone-500">{formatDate(run.start_time)}</td>
                           <td className="px-4 py-3 text-right">
                             <button
                               onClick={() => navigate(`/test-runs/${run.id}`)}
-                              className="text-xs text-indigo-600 hover:text-indigo-800"
+                              className="text-xs text-orange-600 hover:text-orange-800"
                             >
                               View
                             </button>
@@ -413,8 +413,8 @@ export default function Dashboard() {
                     : (
                         <tr>
                           <td colSpan={5} className="px-4 py-10 text-center">
-                            <p className="text-sm text-gray-400">No test runs yet.</p>
-                            <p className="text-xs text-gray-300 mt-1">Open a test suite and click Run Tests to start one.</p>
+                            <p className="text-sm text-stone-400">No test runs yet.</p>
+                            <p className="text-xs text-stone-300 mt-1">Open a test suite and click Run Tests to start one.</p>
                           </td>
                         </tr>
                       )
@@ -423,32 +423,32 @@ export default function Dashboard() {
             </table>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-            <div className="px-4 py-3 border-b border-gray-100">
-              <h2 className="text-sm font-semibold text-gray-700">Recent Activity</h2>
+          <div className="bg-white rounded border border-stone-200 overflow-hidden">
+            <div className="px-4 py-3 border-b border-stone-100">
+              <h2 className="text-sm font-semibold text-stone-700">Recent Activity</h2>
             </div>
-            <ul className="divide-y divide-gray-50">
+            <ul className="divide-y divide-stone-50">
               {loading
                 ? Array.from({ length: 5 }).map((_, i) => (
                     <li key={i} className="px-4 py-3 animate-pulse">
-                      <div className="h-3 bg-gray-200 rounded w-3/4 mb-2" />
-                      <div className="h-2 bg-gray-100 rounded w-1/3" />
+                      <div className="h-3 bg-stone-200 rounded w-3/4 mb-2" />
+                      <div className="h-2 bg-stone-100 rounded w-1/3" />
                     </li>
                   ))
                 : recentActivity?.length > 0
                   ? recentActivity.map(item => (
                       <li key={item.id} className="px-4 py-3">
-                        <p className="text-sm text-gray-800">{formatActivity(item)}</p>
+                        <p className="text-sm text-stone-800">{formatActivity(item)}</p>
                         {item.bug_title && (
-                          <p className="text-xs text-gray-400 mt-0.5 truncate">{item.bug_title}</p>
+                          <p className="text-xs text-stone-400 mt-0.5 truncate">{item.bug_title}</p>
                         )}
-                        <p className="text-xs text-gray-300 mt-0.5">{timeAgo(item.timestamp)}</p>
+                        <p className="text-xs text-stone-300 mt-0.5">{timeAgo(item.timestamp)}</p>
                       </li>
                     ))
                   : (
                       <li className="px-4 py-10 text-center">
-                        <p className="text-sm text-gray-400">No activity yet.</p>
-                        <p className="text-xs text-gray-300 mt-1">Activity appears when bugs are updated or commented on.</p>
+                        <p className="text-sm text-stone-400">No activity yet.</p>
+                        <p className="text-xs text-stone-300 mt-1">Activity appears when bugs are updated or commented on.</p>
                       </li>
                     )
               }
@@ -458,24 +458,24 @@ export default function Dashboard() {
 
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-          <div className="lg:col-span-2 bg-white rounded-lg border border-gray-200 shadow-sm p-4">
-            <h2 className="text-sm font-semibold text-gray-700 mb-3">Pass Rate Trend</h2>
+          <div className="lg:col-span-2 bg-white rounded border border-stone-200 p-4">
+            <h2 className="text-sm font-semibold text-stone-700 mb-3">Pass Rate Trend</h2>
             {trendsLoading ? <ChartSkeleton /> : <PassRateSVG runs={trendRuns} />}
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
-            <h2 className="text-sm font-semibold text-gray-700 mb-3">Test Coverage by Status</h2>
+          <div className="bg-white rounded border border-stone-200 p-4">
+            <h2 className="text-sm font-semibold text-stone-700 mb-3">Test Coverage by Status</h2>
             {trendsLoading ? (
               <div className="animate-pulse h-32 flex items-center justify-center">
-                <div className="h-24 w-24 bg-gray-200 rounded-full" />
+                <div className="h-24 w-24 bg-stone-200 rounded-full" />
               </div>
             ) : (
               <CoverageSVG segments={trends?.coverage || []} />
             )}
           </div>
 
-          <div className="lg:col-span-3 bg-white rounded-lg border border-gray-200 shadow-sm p-4">
-            <h2 className="text-sm font-semibold text-gray-700 mb-3">Bugs Opened vs Closed — Last 8 Weeks</h2>
+          <div className="lg:col-span-3 bg-white rounded border border-stone-200 p-4">
+            <h2 className="text-sm font-semibold text-stone-700 mb-3">Bugs Opened vs Closed — Last 8 Weeks</h2>
             {trendsLoading ? <ChartSkeleton /> : <BugsSVG weeks={trends?.bugs_by_week || []} />}
           </div>
         </div>

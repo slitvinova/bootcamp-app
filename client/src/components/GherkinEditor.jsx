@@ -41,7 +41,7 @@ export default function GherkinEditor({ value, onChange, rows = 6, placeholder }
   };
 
   return (
-    <div className="relative border border-gray-300 rounded-md focus-within:ring-2 focus-within:ring-indigo-500 bg-white overflow-hidden">
+    <div className="relative border border-stone-300 rounded-md focus-within:ring-2 focus-within:ring-orange-500 bg-white overflow-hidden">
       {/* Backdrop renders highlighted text behind the transparent textarea */}
       <div
         ref={backdropRef}
@@ -68,7 +68,7 @@ export default function GherkinEditor({ value, onChange, rows = 6, placeholder }
         onScroll={syncScroll}
         rows={rows}
         placeholder={placeholder}
-        className="placeholder-gray-400 relative block w-full resize-none outline-none"
+        className="placeholder-stone-400 relative block w-full resize-none outline-none"
         style={{
           ...SHARED_STYLE,
           background: 'transparent',

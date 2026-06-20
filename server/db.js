@@ -1,7 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const DB_PATH = path.join(__dirname, 'data.json');
+const DB_PATH = process.env.VERCEL
+  ? '/tmp/data.json'
+  : path.join(__dirname, 'data.json');
 
 const SEED = [
   {

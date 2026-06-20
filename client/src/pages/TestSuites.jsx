@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import SuiteModal from '../components/SuiteModal';
 
 const STATUS_BADGE = {
-  'draft': 'bg-gray-100 text-gray-500',
+  'draft': 'bg-stone-100 text-stone-500',
   'ready': 'bg-blue-100 text-blue-700',
   'in-progress': 'bg-amber-100 text-amber-700',
   'passed': 'bg-green-100 text-green-700',
@@ -53,16 +53,16 @@ export default function TestSuites() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-stone-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Test Suites</h1>
-            <p className="text-sm text-gray-500 mt-0.5">{suites.length} total</p>
+            <h1 className="text-2xl font-semibold text-stone-900">Test Suites</h1>
+            <p className="text-sm text-stone-500 mt-0.5">{suites.length} total</p>
           </div>
           <button
             onClick={() => setModalOpen(true)}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors"
+            className="px-4 py-2 bg-orange-600 text-white rounded-md text-sm font-medium hover:bg-orange-700 transition-colors"
           >
             + New Suite
           </button>
@@ -72,7 +72,7 @@ export default function TestSuites() {
           <select
             value={filterStatus}
             onChange={e => setFilterStatus(e.target.value)}
-            className="border border-gray-300 rounded-md px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            className="border border-stone-300 rounded-md px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-orange-400"
           >
             <option value="">All statuses</option>
             <option value="draft">Draft</option>
@@ -83,46 +83,47 @@ export default function TestSuites() {
           </select>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded border border-stone-200 overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-stone-50 border-b border-stone-200">
               <tr>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">Name</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">Feature</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">Status</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">Cases</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">Updated</th>
+                <th className="text-left px-4 py-3 font-medium text-stone-600">Name</th>
+                <th className="text-left px-4 py-3 font-medium text-stone-600">Feature</th>
+                <th className="text-left px-4 py-3 font-medium text-stone-600">Status</th>
+                <th className="text-left px-4 py-3 font-medium text-stone-600">Cases</th>
+                <th className="text-left px-4 py-3 font-medium text-stone-600">Updated</th>
                 <th className="px-4 py-3 w-10" />
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-stone-100">
               {loading ? (
-                <tr><td colSpan={6} className="text-center py-12 text-gray-400">Loading…</td></tr>
+                <tr><td colSpan={6} className="text-center py-12 text-stone-400">Loading…</td></tr>
               ) : fetchError ? (
                 <tr><td colSpan={6} className="text-center py-12 text-red-500 text-sm">{fetchError}</td></tr>
               ) : suites.length === 0 ? (
-                <tr><td colSpan={6} className="text-center py-12 text-gray-400">No suites found.</td></tr>
+                <tr><td colSpan={6} className="text-center py-12 text-stone-400">No suites found.</td></tr>
               ) : (
                 suites.map(s => (
                   <tr
                     key={s.id}
                     onClick={() => navigate(`/test-suites/${s.id}`)}
-                    className="hover:bg-gray-50 cursor-pointer transition-colors"
+                    className="hover:bg-stone-50 cursor-pointer transition-colors"
                   >
-                    <td className="px-4 py-3 font-medium text-gray-900">{s.name}</td>
-                    <td className="px-4 py-3 text-gray-500">{s.feature}</td>
+                    <td className="px-4 py-3 font-medium text-stone-900">{s.name}</td>
+                    <td className="px-4 py-3 text-stone-500">{s.feature}</td>
                     <td className="px-4 py-3">
                       <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium capitalize ${STATUS_BADGE[s.status]}`}>
                         {s.status}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-gray-500">{s.case_count}</td>
-                    <td className="px-4 py-3 text-gray-500 whitespace-nowrap">{formatDate(s.updated_at)}</td>
+                    <td className="px-4 py-3 text-stone-500">{s.case_count}</td>
+                    <td className="px-4 py-3 text-stone-500 whitespace-nowrap">{formatDate(s.updated_at)}</td>
                     <td className="px-4 py-3 text-right">
                       <button
                         onClick={(e) => handleDelete(e, s.id)}
-                        className="text-gray-400 hover:text-red-600 transition-colors"
+                        className="text-stone-400 hover:text-red-600 transition-colors"
                         title="Delete"
+                        aria-label="Delete suite"
                       >
                         ✕
                       </button>
