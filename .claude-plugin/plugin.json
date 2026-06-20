@@ -1,0 +1,35 @@
+{
+  "name": "runlog-qa-kit",
+  "version": "1.0.0",
+  "description": "QA automation kit for RunLog: slash commands for bug reports and test cases, skills for code review and commit messages, subagents for flake analysis and release notes, and hooks that enforce API conventions and post Discord alerts.",
+  "author": "Sveta Litvinova",
+  "license": "MIT",
+
+  "commands": [
+    ".claude/commands/bug-report.md",
+    ".claude/commands/new-test.md",
+    ".claude/commands/retro.md"
+  ],
+
+  "skills": [
+    ".claude/skills/commit-message-writer/SKILL.md",
+    ".claude/skills/qa-review/SKILL.md",
+    ".claude/skills/test-generator/SKILL.md"
+  ],
+
+  "agents": [
+    ".claude/agents/flake-analyzer.md",
+    ".claude/agents/qa-reviewer.md",
+    ".claude/agents/release-notes-writer.md",
+    ".claude/agents/test-writer.md"
+  ],
+
+  "hooks": [
+    ".claude/hooks/check-response-shape.sh",
+    ".claude/hooks/check-severity-enum.sh",
+    ".claude/hooks/flake-detector.sh",
+    ".claude/hooks/print-todays-summary.sh"
+  ],
+
+  "hookSettings": ".claude/settings.json"
+}
