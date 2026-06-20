@@ -13,6 +13,15 @@
             "command": ".claude/hooks/check-severity-enum.sh"
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/flake-detector.sh"
+          }
+        ]
       }
     ],
     "Stop": [

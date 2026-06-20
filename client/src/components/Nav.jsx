@@ -5,8 +5,9 @@ const LINKS = [
   { to: '/dashboard',   label: 'Dashboard' },
   { to: '/test-cases',  label: 'Test Cases' },
   { to: '/test-suites', label: 'Test Suites' },
-  { to: '/test-runs',   label: 'Test Runs' },
-  { to: '/bugs',        label: 'Bugs' },
+  { to: '/test-runs',    label: 'Test Runs' },
+  { to: '/flaky-tests', label: 'Flaky Tests' },
+  { to: '/bugs',         label: 'Bugs' },
   { to: '/reports',     label: 'Reports' },
   { to: '/settings',    label: 'Settings' },
 ];

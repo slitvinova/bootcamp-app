@@ -9,6 +9,7 @@ app.get('/api/hello', (req, res) => {
   res.json({ message: 'Hello from the server!' });
 });
 
+app.use('/api/flaky-tests', require('./routes/flaky-tests'));
 app.use('/api/test-cases/import', require('./routes/test-case-import'));
 app.use('/api/test-cases', require('./routes/test-cases'));
 app.use('/api/suites', require('./routes/suites'));

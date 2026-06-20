@@ -112,39 +112,87 @@ const SEED_TEST_RUNS = [
 ];
 
 function buildTestRunSeed(ts) {
+  const d2ago = new Date(new Date(ts).getTime() - 2 * 24 * 60 * 60 * 1000).toISOString();
   const d1ago = new Date(new Date(ts).getTime() - 1 * 24 * 60 * 60 * 1000).toISOString();
-  const runs = SEED_TEST_RUNS.map((r, i) => ({
-    id: i + 1,
-    ...r,
-    start_time: d1ago,
-    end_time: d1ago,
-    created_at: d1ago,
-    updated_at: d1ago,
-  }));
+  const runs = [
+    {
+      id: 1, suite_id: 1, suite_name: 'Login Smoke Suite', status: 'completed',
+      pass_count: 1, fail_count: 1, skip_count: 1, created_by: 'seed',
+      start_time: d2ago, end_time: d2ago, created_at: d2ago, updated_at: d2ago,
+    },
+    {
+      id: 2, suite_id: 1, suite_name: 'Login Smoke Suite', status: 'completed',
+      pass_count: 2, fail_count: 1, skip_count: 0, created_by: 'seed',
+      start_time: d1ago, end_time: d1ago, created_at: d1ago, updated_at: d1ago,
+    },
+  ];
   const results = [
+    // Run 1 (2 days ago): valid-creds passes, invalid-pwd fails, logout skipped
     {
       id: 1, run_id: 1, test_case_id: 1,
       test_case_title: 'Log in with valid credentials', test_case_severity: 'Critical',
       sort_order: 1, result: 'passed', duration_ms: 342, notes: '',
-      failed_at: null, github_issue_url: null, created_at: d1ago, updated_at: d1ago,
+      failed_at: null, github_issue_url: null, created_at: d2ago, updated_at: d2ago,
     },
     {
       id: 2, run_id: 1, test_case_id: 2,
       test_case_title: 'Log in with invalid password', test_case_severity: 'Critical',
       sort_order: 2, result: 'failed', duration_ms: 891,
       notes: 'Error message not displayed — page reloads silently instead of showing validation feedback.',
-      failed_at: d1ago, github_issue_url: 'https://github.com/slitvinova/bootcamp-app/issues/2',
-      created_at: d1ago, updated_at: d1ago,
+      failed_at: d2ago, github_issue_url: 'https://github.com/slitvinova/bootcamp-app/issues/2',
+      created_at: d2ago, updated_at: d2ago,
     },
     {
       id: 3, run_id: 1, test_case_id: 5,
       test_case_title: 'Log out of the app', test_case_severity: 'Major',
       sort_order: 3, result: 'skipped', duration_ms: null,
       notes: 'Skipped — blocked by login failure.',
+      failed_at: null, github_issue_url: null, created_at: d2ago, updated_at: d2ago,
+    },
+    // Run 2 (1 day ago): valid-creds fails, invalid-pwd passes, logout passes — creates flaky pattern
+    {
+      id: 4, run_id: 2, test_case_id: 1,
+      test_case_title: 'Log in with valid credentials', test_case_severity: 'Critical',
+      sort_order: 1, result: 'failed', duration_ms: 1203,
+      notes: 'Login succeeded but redirect to home timed out — user landed on blank screen.',
+      failed_at: d1ago, github_issue_url: null, created_at: d1ago, updated_at: d1ago,
+    },
+    {
+      id: 5, run_id: 2, test_case_id: 2,
+      test_case_title: 'Log in with invalid password', test_case_severity: 'Critical',
+      sort_order: 2, result: 'passed', duration_ms: 412, notes: '',
+      failed_at: null, github_issue_url: null, created_at: d1ago, updated_at: d1ago,
+    },
+    {
+      id: 6, run_id: 2, test_case_id: 5,
+      test_case_title: 'Log out of the app', test_case_severity: 'Major',
+      sort_order: 3, result: 'passed', duration_ms: 289, notes: '',
       failed_at: null, github_issue_url: null, created_at: d1ago, updated_at: d1ago,
     },
   ];
   return { runs, results };
+}
+
+function buildFlakeCacheSeed(ts) {
+  const d2ago = new Date(new Date(ts).getTime() - 2 * 24 * 60 * 60 * 1000).toISOString();
+  return {
+    '1': {
+      test_case_id: 1,
+      test_case_title: 'Log in with valid credentials',
+      flake_rate: 0.5,
+      hypothesis: 'Likely a race condition between the session write and the post-login redirect handler under variable server load.',
+      generated_at: d2ago,
+      notified_at: d2ago,
+    },
+    '2': {
+      test_case_id: 2,
+      test_case_title: 'Log in with invalid password',
+      flake_rate: 0.5,
+      hypothesis: 'Error message rendering depends on a DOM paint cycle that completes inconsistently in CI environments.',
+      generated_at: d2ago,
+      notified_at: d2ago,
+    },
+  };
 }
 
 function buildReportSeed(ts) {
@@ -211,12 +259,13 @@ function read() {
       bugs: SEED_BUGS.map((b, i) => ({ id: i + 1, ...b, created_at: ts, updated_at: ts })),
       nextBugActivityId: buildBugActivities(ts).length + 1,
       bugActivity: buildBugActivities(ts).map((a, i) => ({ id: i + 1, ...a })),
-      nextTestRunId: 2,
-      nextTestRunResultId: 4,
+      nextTestRunId: 3,
+      nextTestRunResultId: 7,
       testRuns: buildTestRunSeed(ts).runs,
       testRunResults: buildTestRunSeed(ts).results,
       nextReportId: 2,
       reports: buildReportSeed(ts),
+      flake_cache: buildFlakeCacheSeed(ts),
       user_preferences: {
         theme: 'system',
         default_severity_for_new_bugs: 'Minor',
@@ -309,6 +358,12 @@ function read() {
       timezone: '',
       auto_generate_report_after_run: true,
     };
+    fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
+  }
+
+  // Migration: add flake_cache if missing
+  if (!data.flake_cache) {
+    data.flake_cache = buildFlakeCacheSeed(now());
     fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
   }
 
@@ -612,6 +667,15 @@ const db = {
         .find(r => r.id === Number(resultId) && r.run_id === Number(runId)) || null;
     },
 
+    getAllResultsForTestCase(testCaseId) {
+      return (read().testRunResults || [])
+        .filter(r => r.test_case_id === Number(testCaseId) && r.result !== null);
+    },
+
+    listAllResults() {
+      return read().testRunResults || [];
+    },
+
     create(suiteId, createdBy) {
       const data = read();
       const suite = (data.suites || []).find(s => s.id === Number(suiteId));
@@ -754,6 +818,26 @@ const db = {
       write(data);
       return report;
     },
+  },
+};
+
+db.flakeCache = {
+  get(testCaseId) {
+    return (read().flake_cache || {})[String(testCaseId)] || null;
+  },
+  set(testCaseId, patch) {
+    const data = read();
+    data.flake_cache = data.flake_cache || {};
+    data.flake_cache[String(testCaseId)] = {
+      ...(data.flake_cache[String(testCaseId)] || {}),
+      ...patch,
+    };
+    write(data);
+    return data.flake_cache[String(testCaseId)];
+  },
+  pending() {
+    const cache = read().flake_cache || {};
+    return Object.values(cache).filter(e => e.notified_at === null);
   },
 };
 

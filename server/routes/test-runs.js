@@ -97,6 +97,23 @@ router.patch('/:runId/results/:resultId', async (req, res) => {
   });
 
   if (!updated) return res.status(404).json({ success: false, data: null, error: 'Result not found.' });
+
+  // Flake detection: check if this test case is newly flaky (has both passes and fails)
+  const allResults = db.testRuns.getAllResultsForTestCase(existing.test_case_id);
+  const passes = allResults.filter(r => r.result === 'passed').length;
+  const fails  = allResults.filter(r => r.result === 'failed').length;
+  if (passes >= 1 && fails >= 1 && !db.flakeCache.get(existing.test_case_id)) {
+    const flakeRate = fails / (passes + fails);
+    db.flakeCache.set(existing.test_case_id, {
+      test_case_id: existing.test_case_id,
+      test_case_title: existing.test_case_title,
+      flake_rate: Math.round(flakeRate * 100) / 100,
+      hypothesis: null,
+      generated_at: null,
+      notified_at: null,
+    });
+  }
+
   res.json({ success: true, data: updated, error: null });
 });
 

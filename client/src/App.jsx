@@ -11,6 +11,7 @@ import TestRunDetail from './pages/TestRunDetail';
 import Reports from './pages/Reports';
 import ReportDetail from './pages/ReportDetail';
 import TestCaseImport from './pages/TestCaseImport';
+import FlakyTests from './pages/FlakyTests';
 import Settings from './pages/Settings';
 import KeyboardManager from './components/KeyboardManager';
 
@@ -32,6 +33,7 @@ export default function App() {
         <Route path="/test-runs/:id" element={<TestRunDetail />} />
         <Route path="/reports" element={<Reports />} />
         <Route path="/reports/:id" element={<ReportDetail />} />
+        <Route path="/flaky-tests" element={<FlakyTests />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
