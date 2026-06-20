@@ -7,7 +7,20 @@ body {
 }
 
 :focus-visible {
-  outline: 2px solid #ea580c;
+  outline: 2px solid #3b82f6;
   outline-offset: 2px;
+}
+
+.dark input:not([type="checkbox"]):not([type="radio"]),
+.dark textarea,
+.dark select {
+  background-color: #1e293b;
+  color: #f1f5f9;
+  color-scheme: dark;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #64748b;
 }
 

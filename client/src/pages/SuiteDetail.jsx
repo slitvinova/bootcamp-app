@@ -4,26 +4,26 @@ import AddCaseModal from '../components/AddCaseModal';
 import SuiteModal from '../components/SuiteModal';
 
 const SEVERITY_BADGE = {
-  Critical: 'bg-red-100 text-red-700 border border-red-300',
-  Major: 'bg-orange-100 text-orange-700 border border-orange-300',
-  Minor: 'bg-yellow-100 text-yellow-700 border border-yellow-300',
-  Trivial: 'bg-stone-100 text-stone-500 border border-stone-300',
+  Critical: 'bg-red-900/40 text-red-300 border border-red-800',
+  Major: 'bg-blue-900/40 text-blue-300 border border-blue-800',
+  Minor: 'bg-yellow-900/40 text-yellow-300 border border-yellow-800',
+  Trivial: 'bg-slate-700 text-slate-500 border border-slate-600',
 };
 
 const STATUS_BADGE = {
-  draft: 'bg-stone-100 text-stone-500',
-  ready: 'bg-blue-100 text-blue-700',
-  passed: 'bg-green-100 text-green-700',
-  failed: 'bg-red-100 text-red-700',
-  skipped: 'bg-yellow-100 text-yellow-700',
+  draft: 'bg-slate-700 text-slate-500',
+  ready: 'bg-blue-900/40 text-blue-300',
+  passed: 'bg-green-900/40 text-green-300',
+  failed: 'bg-red-900/40 text-red-300',
+  skipped: 'bg-yellow-900/40 text-yellow-300',
 };
 
 const SUITE_STATUS_BADGE = {
-  'draft': 'bg-stone-100 text-stone-500',
-  'ready': 'bg-blue-100 text-blue-700',
-  'in-progress': 'bg-amber-100 text-amber-700',
-  'passed': 'bg-green-100 text-green-700',
-  'failed': 'bg-red-100 text-red-700',
+  'draft': 'bg-slate-700 text-slate-500',
+  'ready': 'bg-blue-900/40 text-blue-300',
+  'in-progress': 'bg-amber-900/40 text-amber-300',
+  'passed': 'bg-green-900/40 text-green-300',
+  'failed': 'bg-red-900/40 text-red-300',
 };
 
 export default function SuiteDetail() {
@@ -134,29 +134,29 @@ export default function SuiteDetail() {
     setDragOver(null);
   };
 
-  if (loading) return <div className="min-h-screen bg-stone-50 flex items-center justify-center text-stone-400">Loading…</div>;
-  if (loadError) return <div className="min-h-screen bg-stone-50 flex items-center justify-center text-red-500 text-sm">{loadError}</div>;
-  if (!suite) return <div className="min-h-screen bg-stone-50 flex items-center justify-center text-stone-400">Suite not found.</div>;
+  if (loading) return <div className="min-h-screen bg-slate-900 flex items-center justify-center text-slate-400">Loading…</div>;
+  if (loadError) return <div className="min-h-screen bg-slate-900 flex items-center justify-center text-red-500 text-sm">{loadError}</div>;
+  if (!suite) return <div className="min-h-screen bg-slate-900 flex items-center justify-center text-slate-400">Suite not found.</div>;
 
   const existingIds = suite.cases.map(c => c.id);
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-slate-900">
       <div className="max-w-4xl mx-auto px-4 py-8">
 
         {/* Header */}
         <div className="mb-6">
           <button
             onClick={() => navigate('/test-suites')}
-            className="text-sm text-stone-400 hover:text-stone-600 mb-3 flex items-center gap-1"
+            className="text-sm text-slate-400 hover:text-slate-300 mb-3 flex items-center gap-1"
           >
             ← All Suites
           </button>
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-2xl font-semibold text-stone-900">{suite.name}</h1>
+              <h1 className="text-2xl font-semibold text-white">{suite.name}</h1>
               <div className="flex items-center gap-3 mt-1">
-                <span className="text-sm text-stone-500">Feature: <span className="font-medium text-stone-700">{suite.feature}</span></span>
+                <span className="text-sm text-slate-500">Feature: <span className="font-medium text-slate-200">{suite.feature}</span></span>
                 <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium capitalize ${SUITE_STATUS_BADGE[suite.status]}`}>
                   {suite.status}
                 </span>
@@ -165,19 +165,19 @@ export default function SuiteDetail() {
             <div className="flex items-center gap-2">
               <button
                 onClick={handleNewRun}
-                className="px-3 py-1.5 bg-orange-600 text-white rounded-md text-sm font-medium hover:bg-orange-700"
+                className="px-3 py-1.5 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700"
               >
                 ▶ Run Tests
               </button>
               <button
                 onClick={() => setEditModalOpen(true)}
-                className="px-3 py-1.5 border border-stone-300 rounded-md text-sm text-stone-600 hover:bg-stone-50"
+                className="px-3 py-1.5 border border-slate-600 rounded-md text-sm text-slate-300 hover:bg-slate-900"
               >
                 Edit
               </button>
               <button
                 onClick={handleDelete}
-                className="px-3 py-1.5 border border-red-200 rounded-md text-sm text-red-600 hover:bg-red-50"
+                className="px-3 py-1.5 border border-red-800 rounded-md text-sm text-red-400 hover:bg-red-900/40"
               >
                 Delete Suite
               </button>
@@ -186,27 +186,27 @@ export default function SuiteDetail() {
         </div>
 
         {/* Cases */}
-        <div className="bg-white rounded border border-stone-200 overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-stone-200">
-            <h2 className="text-sm font-medium text-stone-700">
-              Test Cases <span className="text-stone-400 font-normal">({suite.cases.length})</span>
+        <div className="bg-slate-800 rounded border border-slate-700 overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700">
+            <h2 className="text-sm font-medium text-slate-200">
+              Test Cases <span className="text-slate-400 font-normal">({suite.cases.length})</span>
             </h2>
             <button
               onClick={() => setAddModalOpen(true)}
-              className="px-3 py-1 bg-orange-600 text-white text-xs font-medium rounded hover:bg-orange-700"
+              className="px-3 py-1 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700"
             >
               + Add Case
             </button>
           </div>
 
           {reorderError && (
-            <p className="px-4 py-2 text-sm text-red-600 bg-red-50 border-b border-red-100">{reorderError}</p>
+            <p className="px-4 py-2 text-sm text-red-400 bg-red-900/40 border-b border-red-800">{reorderError}</p>
           )}
 
           {suite.cases.length === 0 ? (
-            <p className="text-center py-12 text-stone-400 text-sm">No test cases yet. Add one above.</p>
+            <p className="text-center py-12 text-slate-400 text-sm">No test cases yet. Add one above.</p>
           ) : (
-            <ul className="divide-y divide-stone-100">
+            <ul className="divide-y divide-slate-700">
               {suite.cases.map((tc, index) => (
                 <li
                   key={tc.id}
@@ -216,17 +216,17 @@ export default function SuiteDetail() {
                   onDrop={(e) => onDrop(e, index)}
                   onDragEnd={onDragEnd}
                   className={`flex items-center gap-3 px-4 py-3 transition-colors ${
-                    dragOver === index ? 'bg-orange-50 border-t-2 border-orange-400' : 'hover:bg-stone-50'
+                    dragOver === index ? 'bg-blue-900/40 border-t-2 border-blue-500' : 'hover:bg-slate-900'
                   }`}
                 >
                   {/* Drag handle */}
-                  <span className="text-stone-300 cursor-grab select-none text-lg leading-none" title="Drag to reorder">⠿</span>
+                  <span className="text-slate-300 cursor-grab select-none text-lg leading-none" title="Drag to reorder">⠿</span>
 
                   {/* Order number */}
-                  <span className="text-xs text-stone-400 w-5 text-right flex-shrink-0">{index + 1}</span>
+                  <span className="text-xs text-slate-400 w-5 text-right flex-shrink-0">{index + 1}</span>
 
                   {/* Title */}
-                  <span className="flex-1 text-sm text-stone-900 font-medium">{tc.title}</span>
+                  <span className="flex-1 text-sm text-white font-medium">{tc.title}</span>
 
                   {/* Severity */}
                   <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium flex-shrink-0 ${SEVERITY_BADGE[tc.severity]}`}>
@@ -241,7 +241,7 @@ export default function SuiteDetail() {
                   {/* Remove */}
                   <button
                     onClick={() => handleRemoveCase(tc.id)}
-                    className="text-stone-300 hover:text-red-500 transition-colors flex-shrink-0 ml-1"
+                    className="text-slate-300 hover:text-red-500 transition-colors flex-shrink-0 ml-1"
                     title="Remove from suite"
                     aria-label="Remove from suite"
                   >
@@ -253,7 +253,7 @@ export default function SuiteDetail() {
           )}
         </div>
 
-        <p className="text-xs text-stone-400 mt-3 text-center">Drag rows to reorder</p>
+        <p className="text-xs text-slate-400 mt-3 text-center">Drag rows to reorder</p>
       </div>
 
       {addModalOpen && (

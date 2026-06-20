@@ -1,11 +1,11 @@
 import { useRef } from 'react';
 
 const KEYWORD_COLORS = {
-  given: '#7c3aed',
-  when: '#2563eb',
-  then: '#16a34a',
-  and: '#0891b2',
-  but: '#dc2626',
+  given: '#a78bfa',
+  when: '#60a5fa',
+  then: '#4ade80',
+  and: '#22d3ee',
+  but: '#f87171',
 };
 
 function highlight(text) {
@@ -41,7 +41,7 @@ export default function GherkinEditor({ value, onChange, rows = 6, placeholder }
   };
 
   return (
-    <div className="relative border border-stone-300 rounded-md focus-within:ring-2 focus-within:ring-orange-500 bg-white overflow-hidden">
+    <div className="relative border border-slate-600 rounded-md focus-within:ring-2 focus-within:ring-blue-500 bg-slate-800 overflow-hidden">
       {/* Backdrop renders highlighted text behind the transparent textarea */}
       <div
         ref={backdropRef}
@@ -56,7 +56,7 @@ export default function GherkinEditor({ value, onChange, rows = 6, placeholder }
           whiteSpace: 'pre-wrap',
           wordBreak: 'break-word',
           overflow: 'hidden',
-          color: '#374151',
+          color: '#f1f5f9',
           pointerEvents: 'none',
         }}
         dangerouslySetInnerHTML={{ __html: highlight(value) + '​' }}
@@ -68,12 +68,12 @@ export default function GherkinEditor({ value, onChange, rows = 6, placeholder }
         onScroll={syncScroll}
         rows={rows}
         placeholder={placeholder}
-        className="placeholder-stone-400 relative block w-full resize-none outline-none"
+        className="placeholder-slate-400 relative block w-full resize-none outline-none"
         style={{
           ...SHARED_STYLE,
           background: 'transparent',
           color: 'transparent',
-          caretColor: '#374151',
+          caretColor: '#f1f5f9',
           zIndex: 1,
         }}
       />
