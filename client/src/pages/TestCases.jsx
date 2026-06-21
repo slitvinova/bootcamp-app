@@ -36,6 +36,7 @@ export default function TestCases() {
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingCase, setEditingCase] = useState(null);
+  const [refetchKey, setRefetchKey] = useState(0);
 
   const { settings } = useSettings() || {};
   const LIMIT = settings?.default_page_size || 20;
@@ -64,7 +65,7 @@ export default function TestCases() {
       setTotal(json.data.total);
     }
     setLoading(false);
-  }, [page, LIMIT, sortField, sortOrder, filterStatus, debouncedSearch]);
+  }, [page, LIMIT, sortField, sortOrder, filterStatus, debouncedSearch, refetchKey]);
 
   useEffect(() => { fetchCases(); }, [fetchCases]);
 
@@ -80,12 +81,12 @@ export default function TestCases() {
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this test case?')) return;
     await fetch(`/api/test-cases/${id}`, { method: 'DELETE' });
-    fetchCases();
+    setRefetchKey(k => k + 1);
   };
 
   const openEdit = (tc) => { setEditingCase(tc); setModalOpen(true); };
   const openNew = () => { setEditingCase(null); setModalOpen(true); };
-  const handleSaved = () => { setModalOpen(false); setEditingCase(null); fetchCases(); };
+  const handleSaved = () => { setModalOpen(false); setEditingCase(null); setPage(1); setRefetchKey(k => k + 1); };
 
   const formatDate = (iso) => new Date(iso).toLocaleDateString('en-GB', {
     day: '2-digit', month: 'short', year: 'numeric',
