@@ -369,35 +369,55 @@ tbody tr.row-failed:hover td { background: #fff0f1; }
 </html>`;
 }
 
-router.get('/', (req, res) => {
-  res.json({ success: true, data: db.reports.list(), error: null });
-});
-
-router.post('/', (req, res) => {
-  const { run_id } = req.body;
-  if (!run_id) {
-    return res.status(400).json({ success: false, data: null, error: 'run_id is required.' });
+router.get('/', async (req, res) => {
+  try {
+    res.json({ success: true, data: await db.reports.list(), error: null });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, data: null, error: 'Internal server error' });
   }
-  const report = db.reports.create(run_id);
-  if (!report) {
-    return res.status(404).json({ success: false, data: null, error: 'Test run not found.' });
+});
+
+router.post('/', async (req, res) => {
+  try {
+    const { run_id } = req.body;
+    if (!run_id) {
+      return res.status(400).json({ success: false, data: null, error: 'run_id is required.' });
+    }
+    const report = await db.reports.create(run_id);
+    if (!report) {
+      return res.status(404).json({ success: false, data: null, error: 'Test run not found.' });
+    }
+    res.status(201).json({ success: true, data: report, error: null });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, data: null, error: 'Internal server error' });
   }
-  res.status(201).json({ success: true, data: report, error: null });
 });
 
-router.get('/:id', (req, res) => {
-  const report = db.reports.get(req.params.id);
-  if (!report) return res.status(404).json({ success: false, data: null, error: 'Report not found.' });
-  res.json({ success: true, data: report, error: null });
+router.get('/:id', async (req, res) => {
+  try {
+    const report = await db.reports.get(req.params.id);
+    if (!report) return res.status(404).json({ success: false, data: null, error: 'Report not found.' });
+    res.json({ success: true, data: report, error: null });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, data: null, error: 'Internal server error' });
+  }
 });
 
-router.get('/:id/export/html', (req, res) => {
-  const report = db.reports.get(req.params.id);
-  if (!report) return res.status(404).json({ success: false, data: null, error: 'Report not found.' });
-  const slug = report.suite_name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  res.setHeader('Content-Type', 'text/html; charset=utf-8');
-  res.setHeader('Content-Disposition', `attachment; filename="report-run${report.run_id}-${slug}.html"`);
-  res.send(buildHtml(report));
+router.get('/:id/export/html', async (req, res) => {
+  try {
+    const report = await db.reports.get(req.params.id);
+    if (!report) return res.status(404).json({ success: false, data: null, error: 'Report not found.' });
+    const slug = report.suite_name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="report-run${report.run_id}-${slug}.html"`);
+    res.send(buildHtml(report));
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, data: null, error: 'Internal server error' });
+  }
 });
 
 module.exports = router;

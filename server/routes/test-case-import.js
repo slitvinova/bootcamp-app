@@ -30,7 +30,6 @@ function normaliseHeaders(record) {
 function validateRow(raw, rowNum) {
   const r = normaliseHeaders(raw);
 
-  // Accept 'steps' as an alias for 'scenario'
   const title    = r.title    || '';
   const severity = r.severity || '';
   const scenario = r.scenario || r.steps || '';
@@ -87,7 +86,6 @@ router.post('/preview', upload.single('file'), (req, res) => {
     return res.json({ success: false, data: null, error: 'File is empty or has no data rows.' });
   }
 
-  // Check required headers (case-insensitive; accept 'steps' as alias for 'scenario')
   const fileHeaders = Object.keys(records[0]).map(h => h.toLowerCase().trim());
   const hasScenario = fileHeaders.includes('scenario') || fileHeaders.includes('steps');
   const missing = [];
@@ -103,7 +101,7 @@ router.post('/preview', upload.single('file'), (req, res) => {
     });
   }
 
-  const rows = records.map((r, i) => validateRow(r, i + 2)); // +2: row 1 is headers
+  const rows = records.map((r, i) => validateRow(r, i + 2));
   const valid_count   = rows.filter(r => r.valid).length;
   const invalid_count = rows.length - valid_count;
 
@@ -111,28 +109,33 @@ router.post('/preview', upload.single('file'), (req, res) => {
 });
 
 // POST /api/test-cases/import/commit
-router.post('/commit', (req, res) => {
-  const { rows } = req.body;
-  if (!Array.isArray(rows) || !rows.length) {
-    return res.json({ success: false, data: null, error: 'No rows provided.' });
-  }
-
-  let imported = 0;
-  for (const row of rows) {
-    try {
-      db.create({
-        title:    row.title,
-        severity: row.severity,
-        scenario: row.scenario,
-        status:   row.status || 'draft',
-      });
-      imported++;
-    } catch {
-      // skip rows that fail at the db level
+router.post('/commit', async (req, res) => {
+  try {
+    const { rows } = req.body;
+    if (!Array.isArray(rows) || !rows.length) {
+      return res.json({ success: false, data: null, error: 'No rows provided.' });
     }
-  }
 
-  res.json({ success: true, data: { imported }, error: null });
+    let imported = 0;
+    for (const row of rows) {
+      try {
+        await db.create({
+          title:    row.title,
+          severity: row.severity,
+          scenario: row.scenario,
+          status:   row.status || 'draft',
+        });
+        imported++;
+      } catch {
+        // skip rows that fail at the db level
+      }
+    }
+
+    res.json({ success: true, data: { imported }, error: null });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, data: null, error: 'Internal server error' });
+  }
 });
 
 // Multer error handler
